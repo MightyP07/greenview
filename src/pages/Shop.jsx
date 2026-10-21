@@ -1,370 +1,343 @@
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
+import { AnimatePresence, motion } from "motion/react";
 import {
-  AnimatePresence,
-  motion,
-  useReducedMotion,
-} from "motion/react";
+  ArrowRight,
+  Check,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Filter,
+  Search,
+  ShoppingBag,
+  SlidersHorizontal,
+  Sparkles,
+  X,
+} from "lucide-react";
 
 import {
-  products,
+  IS_DEMO_STORE,
   PRODUCT_CATEGORIES,
   PRODUCT_SUBCATEGORIES,
-  productSortOptions,
   filterProducts,
   formatPrice,
   isPurchasable,
+  productSortOptions,
 } from "../data/products";
 
 import { useCart } from "../context/CartContext";
 
-const PAGE_SIZE = 9;
 const EASE = [0.22, 1, 0.36, 1];
+const PAGE_SIZE = 9;
 
 const CATEGORY_IMAGES = {
-  all: "/images/shop-all.jpg",
-  fruit: "/images/shop-fruit.jpg",
-  wine: "/images/shop-wine.jpg",
-  gifts: "/images/shop-gifts.jpg",
+  all:
+    "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=900&q=85",
+  fruit:
+    "https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fit=crop&w=900&q=85",
+  wine:
+    "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=900&q=85",
+  gifts:
+    "https://images.unsplash.com/photo-1513201099705-a9746e1e201f?auto=format&fit=crop&w=900&q=85",
 };
 
-const CATEGORY_FALLBACKS = {
-  all: "https://images.unsplash.com/photo-1506976785307-8732e854ad03?auto=format&fit=crop&w=1600&q=85",
-  fruit: "https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fit=crop&w=1600&q=85",
-  wine: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=1600&q=85",
-  gifts: "https://images.unsplash.com/photo-1513201099705-a9746e1e201f?auto=format&fit=crop&w=1600&q=85",
+const CATEGORY_LABELS = {
+  all: "The complete collection",
+  fruit: "Fresh from the orchard",
+  wine: "A considered collection",
+  gifts: "Thoughtfully chosen",
 };
 
-function Icon({ name, size = 20, className = "" }) {
-  const paths = {
-    arrow: (
-      <>
-        <path d="M4 12h16" />
-        <path d="m13 5 7 7-7 7" />
-      </>
-    ),
-    diagonal: (
-      <>
-        <path d="M5 19 19 5" />
-        <path d="M9 5h10v10" />
-      </>
-    ),
-    search: (
-      <>
-        <circle cx="11" cy="11" r="7" />
-        <path d="m20 20-4-4" />
-      </>
-    ),
-    close: (
-      <>
-        <path d="M5 5 19 19" />
-        <path d="M19 5 5 19" />
-      </>
-    ),
-    filter: (
-      <>
-        <path d="M4 7h16M7 12h10M10 17h4" />
-      </>
-    ),
-    grid: (
-      <>
-        <rect x="3" y="3" width="7" height="7" rx="1" />
-        <rect x="14" y="3" width="7" height="7" rx="1" />
-        <rect x="3" y="14" width="7" height="7" rx="1" />
-        <rect x="14" y="14" width="7" height="7" rx="1" />
-      </>
-    ),
-    bag: (
-      <>
-        <path d="M4 8h16l-1 13H5L4 8Z" />
-        <path d="M9 9V6a3 3 0 0 1 6 0v3" />
-      </>
-    ),
-    chevron: <path d="m6 9 6 6 6-6" />,
-    left: (
-      <>
-        <path d="M20 12H4" />
-        <path d="m11 19-7-7 7-7" />
-      </>
-    ),
-    right: (
-      <>
-        <path d="M4 12h16" />
-        <path d="m13 5 7 7-7 7" />
-      </>
-    ),
-    check: <path d="m5 12 4 4L19 6" />,
-    info: (
-      <>
-        <circle cx="12" cy="12" r="9" />
-        <path d="M12 11v5M12 8h.01" />
-      </>
-    ),
-  };
-
+function IconButton({ children, onClick, label, className = "" }) {
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.6"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-      aria-hidden="true"
-    >
-      {paths[name]}
-    </svg>
-  );
-}
-
-function Reveal({
-  children,
-  delay = 0,
-  className = "",
-  y = 35,
-}) {
-  const reducedMotion = useReducedMotion();
-
-  return (
-    <motion.div
-      initial={reducedMotion ? false : { opacity: 0, y }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.1 }}
-      transition={{
-        duration: reducedMotion ? 0 : 0.7,
-        delay: reducedMotion ? 0 : delay,
-        ease: EASE,
-      }}
-      className={className}
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={label}
+      className={`inline-flex h-11 w-11 items-center justify-center border border-[#dedfd6] bg-white text-[#284831] transition-colors hover:border-[#284831] ${className}`}
     >
       {children}
-    </motion.div>
+    </button>
   );
 }
 
-function ShopHero({ category }) {
-  const reducedMotion = useReducedMotion();
-
-  const categoryInfo = PRODUCT_CATEGORIES.find(
-    (item) => item.slug === category
+function SectionHeading({ eyebrow, title, description }) {
+  return (
+    <div>
+      <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.28em] text-[#b28b51]">
+        {eyebrow}
+      </p>
+      <h2 className="font-serif text-[32px] leading-[1.1] tracking-[-0.035em] text-[#213b2a] sm:text-[42px]">
+        {title}
+      </h2>
+      {description && (
+        <p className="mt-4 max-w-xl text-sm leading-7 text-[#718071]">
+          {description}
+        </p>
+      )}
+    </div>
   );
+}
 
-  const title =
-    category === "all"
-      ? "The Orchard Shop"
-      : categoryInfo?.name || "The Orchard Shop";
-
-  const subtitle =
-    category === "all"
-      ? "Explore seasonal harvests, orchard favourites, wines, and thoughtful gifts."
-      : categoryInfo?.description ||
-        "Explore our orchard collection.";
+function DemoNotice() {
+  if (!IS_DEMO_STORE) return null;
 
   return (
-    <section className="relative isolate flex min-h-[390px] items-center overflow-hidden bg-[#213b2a] sm:min-h-[460px] lg:min-h-[530px]">
-      <motion.div
-        key={category}
-        initial={reducedMotion ? false : { opacity: 0, scale: 1.08 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: reducedMotion ? 0 : 1.2, ease: EASE }}
-        className="absolute inset-0"
-      >
-        <img
-          src={CATEGORY_FALLBACKS[category] || CATEGORY_FALLBACKS.all}
-          alt=""
-          className="h-full w-full object-cover"
-        />
-      </motion.div>
-
-      <div className="absolute inset-0 bg-[#122419]/70" />
-      <div className="absolute inset-0 bg-gradient-to-r from-[#102319]/75 via-transparent to-transparent" />
-
-      <div className="relative z-10 mx-auto w-full max-w-[1440px] px-6 py-24 sm:px-10 lg:px-14">
-        <motion.div
-          key={`content-${category}`}
-          initial={reducedMotion ? false : { opacity: 0, y: 35 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{
-            duration: reducedMotion ? 0 : 0.8,
-            delay: 0.12,
-            ease: EASE,
-          }}
-          className="max-w-[850px]"
-        >
-          <div className="mb-7 flex items-center gap-3 text-[11px] uppercase tracking-[0.16em] text-white/70">
-            <Link to="/" className="transition-colors hover:text-white">
-              Home
-            </Link>
-
-            <span>/</span>
-
-            <span className="text-[#e5c18a]">Shop</span>
+    <section
+      aria-label="Demonstration store notice"
+      className="border-b border-[#e5ddca] bg-[#fff8e9]"
+    >
+      <div className="mx-auto flex max-w-[1440px] flex-col gap-3 px-5 py-4 sm:px-8 md:flex-row md:items-center md:justify-between lg:px-12">
+        <div className="flex items-start gap-3">
+          <Sparkles
+            size={17}
+            className="mt-0.5 shrink-0 text-[#a77d3f]"
+          />
+          <div>
+            <p className="text-[12px] font-bold uppercase tracking-[0.1em] text-[#71542c]">
+              Demonstration storefront
+            </p>
+            <p className="mt-1 text-[12px] leading-6 text-[#856b47]">
+              Products, prices and availability are illustrative.
+              You can explore the shop and test the cart, but no
+              purchases or payments can be completed.
+            </p>
           </div>
-
-          <p className="mb-5 text-[11px] font-semibold uppercase tracking-[0.3em] text-[#e5c18a]">
-            Greenview Orchard Collection
-          </p>
-
-          <h1 className="font-serif text-[clamp(3.5rem,7.8vw,7.5rem)] leading-[1.02] tracking-[-0.055em] text-white">
-            {title}
-            <span className="text-[#e5c18a]">.</span>
-          </h1>
-
-          <p className="mt-7 max-w-[570px] text-[15px] leading-[1.9] text-white/80 sm:text-base">
-            {subtitle}
-          </p>
-        </motion.div>
-      </div>
-
-      <div className="absolute bottom-0 right-0 hidden bg-[#faf9f5] px-9 py-5 lg:block">
-        <span className="font-serif text-xl italic text-[#284831]">
-          From our orchard to you.
+        </div>
+        <span className="shrink-0 self-start border border-[#e0cba8] px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-[#8a6634]">
+          Demo only
         </span>
       </div>
     </section>
   );
 }
 
-function CategoryTabs({ activeCategory, onCategoryChange }) {
+function ShopHero() {
   return (
-    <div className="border-b border-[#e4e5dc] bg-[#faf9f5]">
-      <div className="mx-auto flex max-w-[1440px] gap-8 overflow-x-auto px-6 sm:px-10 lg:gap-12 lg:px-14">
-        {PRODUCT_CATEGORIES.map((category) => {
-          const active = activeCategory === category.slug;
-
-          return (
-            <button
-              key={category.id}
-              type="button"
-              onClick={() => onCategoryChange(category.slug)}
-              className={`relative shrink-0 py-7 text-[11px] font-semibold uppercase tracking-[0.16em] transition-colors sm:text-xs ${
-                active
-                  ? "text-[#284831]"
-                  : "text-[#8b9489] hover:text-[#284831]"
-              }`}
-            >
-              {category.name}
-
-              {active && (
-                <motion.span
-                  layoutId="shop-category-underline"
-                  className="absolute bottom-0 left-0 h-[2px] w-full bg-[#b28b51]"
-                  transition={{ type: "spring", stiffness: 350, damping: 30 }}
-                />
-              )}
-            </button>
-          );
-        })}
+    <section className="relative isolate overflow-hidden bg-[#102519]">
+      <div className="absolute inset-0">
+        <img
+          src="https://images.unsplash.com/photo-1506976785307-8732e854ad03?auto=format&fit=crop&w=2200&q=85"
+          alt="Illustrative orchard landscape"
+          className="h-full w-full object-cover opacity-55"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#102519]/95 via-[#102519]/75 to-[#102519]/30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#102519]/45 to-transparent" />
       </div>
-    </div>
-  );
-}
 
-function ShopSidebar({
-  category,
-  subcategory,
-  onCategoryChange,
-  onSubcategoryChange,
-  availableOnly,
-  onAvailableChange,
-  mobile = false,
-}) {
-  const subcategories = PRODUCT_SUBCATEGORIES.filter(
-    (item) => category === "all" || item.category === category
-  );
+      <div className="relative mx-auto flex min-h-[440px] max-w-[1440px] items-center px-5 py-24 sm:px-8 lg:min-h-[520px] lg:px-12">
+        <div className="max-w-[780px]">
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: EASE }}
+            className="mb-6 flex items-center gap-4"
+          >
+            <span className="h-px w-10 bg-[#d7b47b]" />
+            <span className="text-[10px] font-semibold uppercase tracking-[0.32em] text-[#e5c18a]">
+              Greenview Orchard & Estate
+            </span>
+          </motion.div>
 
-  return (
-    <div className={mobile ? "" : "hidden lg:block"}>
-      <div className="border-b border-[#e4e5dc] pb-9">
-        <h3 className="mb-6 text-[12px] font-semibold uppercase tracking-[0.19em] text-[#284831]">
-          Categories
-        </h3>
+          <motion.h1
+            initial={{ opacity: 0, y: 25 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              duration: 0.8,
+              delay: 0.1,
+              ease: EASE,
+            }}
+            className="font-serif text-[clamp(3.6rem,8vw,7.8rem)] leading-[0.98] tracking-[-0.055em] text-white"
+          >
+            The Orchard
+            <br />
+            <span className="italic text-[#e5c18a]">
+              Collection.
+            </span>
+          </motion.h1>
 
-        <div className="space-y-1">
-          {PRODUCT_CATEGORIES.map((item) => {
-            const count =
-              item.slug === "all"
-                ? products.length
-                : products.filter(
-                    (product) => product.category === item.slug
-                  ).length;
+          <motion.p
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              duration: 0.7,
+              delay: 0.2,
+              ease: EASE,
+            }}
+            className="mt-8 max-w-[530px] text-[14px] leading-8 text-white/75 sm:text-[16px]"
+          >
+            Discover a thoughtfully presented collection of
+            orchard-inspired fruit, wines and gifts.
+          </motion.p>
 
-            const active = category === item.slug;
-
-            return (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => onCategoryChange(item.slug)}
-                className={`flex w-full items-center justify-between gap-4 py-3 text-left text-[14px] transition-colors ${
-                  active
-                    ? "font-semibold text-[#284831]"
-                    : "text-[#758073] hover:text-[#284831]"
-                }`}
-              >
-                <span>{item.name}</span>
-                <span className="text-xs text-[#a5aca2]">
-                  {count}
-                </span>
-              </button>
-            );
-          })}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.35 }}
+            className="mt-10 flex items-center gap-3 text-[11px] uppercase tracking-[0.2em] text-white/65"
+          >
+            <span>Home</span>
+            <ChevronRight size={13} />
+            <span className="text-[#e5c18a]">Shop</span>
+          </motion.div>
         </div>
       </div>
 
-      <div className="border-b border-[#e4e5dc] py-9">
-        <h3 className="mb-6 text-[12px] font-semibold uppercase tracking-[0.19em] text-[#284831]">
+      <div className="pointer-events-none absolute bottom-[-25px] right-[-20px] select-none font-serif text-[clamp(100px,19vw,330px)] leading-none tracking-[-0.08em] text-white/[0.035]">
+        harvest
+      </div>
+    </section>
+  );
+}
+
+function CategoryCard({ category, active, onClick, count }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      className={`group relative isolate h-[210px] overflow-hidden text-left sm:h-[240px] ${
+        active
+          ? "ring-2 ring-[#b28b51] ring-offset-4"
+          : ""
+      }`}
+    >
+      <img
+        src={CATEGORY_IMAGES[category.id]}
+        alt=""
+        className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+        loading="lazy"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#102519]/90 via-[#102519]/25 to-transparent" />
+
+      <div className="relative flex h-full flex-col justify-end p-5 sm:p-6">
+        <span className="mb-2 text-[9px] font-semibold uppercase tracking-[0.22em] text-[#e5c18a]">
+          {CATEGORY_LABELS[category.id]}
+        </span>
+
+        <div className="flex items-end justify-between gap-3">
+          <div>
+            <h3 className="font-serif text-[24px] leading-tight text-white sm:text-[27px]">
+              {category.name}
+            </h3>
+            <p className="mt-2 text-[11px] text-white/70">
+              {count} {count === 1 ? "product" : "products"}
+            </p>
+          </div>
+
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/40 text-white transition-colors group-hover:border-[#e5c18a] group-hover:bg-[#e5c18a] group-hover:text-[#213b2a]">
+            <ArrowRight size={16} />
+          </span>
+        </div>
+      </div>
+    </button>
+  );
+}
+
+function FilterContents({
+  category,
+  subcategory,
+  availableOnly,
+  onCategoryChange,
+  onSubcategoryChange,
+  onAvailableChange,
+  onClear,
+  counts,
+}) {
+  const subcategories = PRODUCT_SUBCATEGORIES.filter(
+    (item) =>
+      category === "all" || item.category === category
+  );
+
+  return (
+    <div className="space-y-9">
+      <div>
+        <div className="mb-5 flex items-center justify-between">
+          <h3 className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#284831]">
+            Categories
+          </h3>
+          <button
+            type="button"
+            onClick={onClear}
+            className="text-[11px] text-[#9a7a4c] underline underline-offset-4 hover:text-[#284831]"
+          >
+            Clear all
+          </button>
+        </div>
+
+        <div className="space-y-1">
+          {PRODUCT_CATEGORIES.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => onCategoryChange(item.id)}
+              className={`flex w-full items-center justify-between gap-3 px-3 py-3 text-left text-[13px] transition-colors ${
+                category === item.id
+                  ? "bg-[#284831] text-white"
+                  : "text-[#667365] hover:bg-[#eff1e9] hover:text-[#284831]"
+              }`}
+            >
+              <span>{item.name}</span>
+              <span
+                className={`text-[11px] ${
+                  category === item.id
+                    ? "text-white/75"
+                    : "text-[#a1a99e]"
+                }`}
+              >
+                {counts[item.id] ?? 0}
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="border-t border-[#e7e9e1] pt-7">
+        <h3 className="mb-5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#284831]">
           Product Type
         </h3>
 
         <div className="space-y-1">
-          {subcategories.map((item) => {
-            const active = subcategory === item.id;
-
-            return (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() =>
-                  onSubcategoryChange(active ? "" : item.id)
-                }
-                className="flex w-full items-center gap-3 py-3 text-left"
+          {subcategories.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() =>
+                onSubcategoryChange(
+                  subcategory === item.id ? "" : item.id,
+                  item.category
+                )
+              }
+              className={`flex w-full items-center gap-3 px-3 py-2.5 text-left text-[12px] transition-colors ${
+                subcategory === item.id
+                  ? "bg-[#eef1e9] font-semibold text-[#284831]"
+                  : "text-[#718071] hover:bg-[#f3f4ee] hover:text-[#284831]"
+              }`}
+            >
+              <span
+                className={`flex h-4 w-4 shrink-0 items-center justify-center border ${
+                  subcategory === item.id
+                    ? "border-[#284831] bg-[#284831] text-white"
+                    : "border-[#c8cec3]"
+                }`}
               >
-                <span
-                  className={`flex h-[17px] w-[17px] shrink-0 items-center justify-center border transition-colors ${
-                    active
-                      ? "border-[#284831] bg-[#284831] text-white"
-                      : "border-[#b8c0b5]"
-                  }`}
-                >
-                  {active && <Icon name="check" size={13} />}
-                </span>
-
-                <span
-                  className={`text-[14px] ${
-                    active
-                      ? "font-medium text-[#284831]"
-                      : "text-[#758073]"
-                  }`}
-                >
-                  {item.name}
-                </span>
-              </button>
-            );
-          })}
+                {subcategory === item.id && (
+                  <Check size={11} />
+                )}
+              </span>
+              {item.name}
+            </button>
+          ))}
         </div>
       </div>
 
-      <div className="py-9">
-        <h3 className="mb-6 text-[12px] font-semibold uppercase tracking-[0.19em] text-[#284831]">
+      <div className="border-t border-[#e7e9e1] pt-7">
+        <h3 className="mb-5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#284831]">
           Availability
         </h3>
 
-        <label className="flex cursor-pointer items-center gap-3">
+        <label className="flex cursor-pointer items-center gap-3 px-3 py-2 text-[12px] text-[#718071]">
           <input
             type="checkbox"
             checked={availableOnly}
@@ -373,172 +346,150 @@ function ShopSidebar({
             }
             className="h-4 w-4 accent-[#284831]"
           />
-
-          <span className="text-[14px] text-[#758073]">
-            Available products only
-          </span>
+          {IS_DEMO_STORE
+            ? "Available in demo"
+            : "Available products only"}
         </label>
       </div>
 
-      <div className="mt-5 bg-[#edf0e9] px-7 py-9">
-        <p className="font-serif text-3xl italic leading-tight text-[#284831]">
-          Fresh from
-          <br />
-          the orchard.
+      <div className="border border-[#e7e6dc] bg-[#f7f7f1] p-5">
+        <Sparkles
+          size={19}
+          className="mb-3 text-[#b28b51]"
+        />
+        <p className="font-serif text-[21px] text-[#284831]">
+          A little something special.
         </p>
-
-        <p className="mt-5 text-[13px] leading-[1.9] text-[#71806f]">
-          Our collection changes with the seasons. Explore the latest
-          products and discover something special.
+        <p className="mt-2 text-[12px] leading-6 text-[#7c8778]">
+          Explore our orchard-inspired gifts and seasonal
+          collections.
         </p>
-
-        <Link
-          to="/about"
-          className="mt-6 inline-flex items-center gap-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#284831]"
+        <button
+          type="button"
+          onClick={() => onCategoryChange("gifts")}
+          className="mt-4 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.13em] text-[#284831]"
         >
-          Our Story
-          <Icon name="arrow" size={17} />
-        </Link>
+          Browse gifts
+          <ArrowRight size={14} />
+        </button>
       </div>
     </div>
   );
 }
 
-function ProductCard({ product, index }) {
-  const { addToCart } = useCart();
-  const reducedMotion = useReducedMotion();
-  const [feedback, setFeedback] = useState("");
-
+function ProductCard({ product, index, onAdd }) {
   const purchasable = isPurchasable(product);
-
-  useEffect(() => {
-    if (!feedback) return;
-
-    const timeout = window.setTimeout(() => setFeedback(""), 2800);
-    return () => window.clearTimeout(timeout);
-  }, [feedback]);
-
-  const handleAddToCart = () => {
-    const result = addToCart(product.id);
-    setFeedback(result.message);
-  };
 
   return (
     <motion.article
-      layout={!reducedMotion}
-      initial={reducedMotion ? false : { opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={reducedMotion ? undefined : { opacity: 0, scale: 0.97 }}
+      initial={{ opacity: 0, y: 25 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.1 }}
       transition={{
-        duration: reducedMotion ? 0 : 0.45,
-        delay: reducedMotion ? 0 : Math.min(index * 0.045, 0.3),
+        duration: 0.55,
+        delay: Math.min(index % 3, 2) * 0.07,
         ease: EASE,
       }}
       className="group min-w-0"
     >
-      <div className="relative aspect-[3/3.65] overflow-hidden bg-[#eeeee7]">
+      <div className="relative aspect-[0.88] overflow-hidden bg-[#f0f1eb]">
         <Link
           to={`/shop/${product.slug}`}
+          className="block h-full w-full"
           aria-label={`View ${product.name}`}
-          className="absolute inset-0 block"
         >
-          <motion.img
+          <img
             src={product.image}
             alt={product.name}
             loading="lazy"
-            className="h-full w-full object-cover"
-            whileHover={reducedMotion ? {} : { scale: 1.075 }}
-            transition={{ duration: 0.9, ease: EASE }}
+            className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.07]"
           />
+          <div className="absolute inset-0 bg-[#102519]/0 transition-colors duration-500 group-hover:bg-[#102519]/[0.07]" />
         </Link>
 
-        {product.badge && (
-          <span className="absolute left-4 top-4 bg-[#faf9f5] px-3 py-2 text-[9px] font-semibold uppercase tracking-[0.15em] text-[#284831]">
-            {product.badge}
-          </span>
+        <div className="absolute left-3 top-3 flex flex-wrap gap-2">
+          {product.badge && (
+            <span className="bg-white/95 px-3 py-2 text-[9px] font-bold uppercase tracking-[0.14em] text-[#284831] backdrop-blur-sm">
+              {product.badge}
+            </span>
+          )}
+          {product.requiresAgeVerification && (
+            <span className="bg-[#284831] px-3 py-2 text-[9px] font-bold uppercase tracking-[0.14em] text-white">
+              18+
+            </span>
+          )}
+        </div>
+
+        {purchasable && !product.requiresAgeVerification && (
+          <button
+            type="button"
+            onClick={() => onAdd(product)}
+            className="absolute bottom-3 left-3 right-3 flex items-center justify-center gap-2 bg-white px-4 py-3.5 text-[10px] font-bold uppercase tracking-[0.14em] text-[#284831] shadow-lg transition-colors hover:bg-[#284831] hover:text-white sm:translate-y-[calc(100%+16px)] sm:opacity-0 sm:transition-all sm:duration-300 sm:group-hover:translate-y-0 sm:group-hover:opacity-100 sm:focus:translate-y-0 sm:focus:opacity-100"
+          >
+            <ShoppingBag size={15} />
+            {IS_DEMO_STORE ? "Add to demo cart" : "Add to cart"}
+          </button>
         )}
 
         {product.requiresAgeVerification && (
-          <span className="absolute right-4 top-4 bg-[#284831]/90 px-3 py-2 text-[10px] font-semibold text-white">
-            18+
-          </span>
-        )}
-
-        <div className="pointer-events-none absolute bottom-4 left-4 right-4 flex translate-y-3 justify-end opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 max-md:translate-y-0 max-md:opacity-100">
           <Link
             to={`/shop/${product.slug}`}
-            className="pointer-events-auto flex h-11 w-11 items-center justify-center bg-white text-[#284831] shadow-lg transition-colors hover:bg-[#e5c18a]"
-            aria-label={`View ${product.name}`}
+            className="absolute bottom-3 left-3 right-3 flex items-center justify-center gap-2 bg-white px-4 py-3.5 text-[10px] font-bold uppercase tracking-[0.14em] text-[#284831] shadow-lg transition-colors hover:bg-[#284831] hover:text-white sm:translate-y-[calc(100%+16px)] sm:opacity-0 sm:transition-all sm:duration-300 sm:group-hover:translate-y-0 sm:group-hover:opacity-100 sm:focus:translate-y-0 sm:focus:opacity-100"
           >
-            <Icon name="diagonal" size={19} />
+            View details
+            <ArrowRight size={15} />
           </Link>
-        </div>
+        )}
       </div>
 
-      <div className="pt-6">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.17em] text-[#b28b51]">
-          {PRODUCT_CATEGORIES.find(
-            (category) => category.slug === product.category
-          )?.name || product.category}
-        </p>
+      <div className="pt-5">
+        <div className="mb-2 flex items-center justify-between gap-3">
+          <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-[#b28b51]">
+            {PRODUCT_CATEGORIES.find(
+              (item) => item.id === product.category
+            )?.name ?? product.category}
+          </span>
 
-        <Link to={`/shop/${product.slug}`}>
-          <h3 className="mt-3 font-serif text-[clamp(1.4rem,2.1vw,1.9rem)] leading-[1.2] tracking-[-0.025em] text-[#284831] transition-colors hover:text-[#b28b51]">
+          {product.featured && (
+            <span className="text-[9px] uppercase tracking-[0.1em] text-[#9ba69a]">
+              Featured
+            </span>
+          )}
+        </div>
+
+        <Link
+          to={`/shop/${product.slug}`}
+          className="block"
+        >
+          <h3 className="font-serif text-[23px] leading-[1.2] tracking-[-0.02em] text-[#284831] transition-colors hover:text-[#b28b51]">
             {product.name}
           </h3>
         </Link>
 
-        <p className="mt-3 line-clamp-2 min-h-[42px] text-[13px] leading-[1.7] text-[#7b8579]">
+        <p className="mt-2 line-clamp-2 min-h-[44px] text-[12px] leading-[22px] text-[#829080]">
           {product.shortDescription}
         </p>
 
-        <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+        <div className="mt-4 flex items-center justify-between gap-3 border-t border-[#e7e9e1] pt-4">
           <div>
-            <p className="text-[15px] font-semibold text-[#284831]">
-              {formatPrice(product.price, product.currency)}
-            </p>
-
-            {!purchasable && (
-              <p className="mt-1 text-[11px] text-[#90998d]">
-                {product.availabilityLabel ||
-                  "Currently unavailable"}
+            <span className="text-[16px] font-semibold text-[#284831]">
+              {formatPrice(product.price)}
+            </span>
+            {IS_DEMO_STORE && (
+              <p className="mt-1 text-[10px] text-[#9b8a6c]">
+                Illustrative price
               </p>
             )}
           </div>
 
-          <button
-            type="button"
-            onClick={handleAddToCart}
-            disabled={!purchasable}
-            title={
-              !purchasable
-                ? "Product price or availability is not confirmed"
-                : `Add ${product.name} to cart`
-            }
-            className={`flex h-11 w-11 shrink-0 items-center justify-center border transition-all ${
-              purchasable
-                ? "border-[#284831] bg-[#284831] text-white hover:bg-[#b28b51] hover:border-[#b28b51]"
-                : "cursor-not-allowed border-[#dce0d8] bg-[#eff0eb] text-[#aeb5a9]"
-            }`}
-            aria-label={`Add ${product.name} to cart`}
+          <Link
+            to={`/shop/${product.slug}`}
+            aria-label={`View ${product.name}`}
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-[#dfe4da] text-[#284831] transition-all hover:border-[#284831] hover:bg-[#284831] hover:text-white"
           >
-            <Icon name="bag" size={19} />
-          </button>
+            <ArrowRight size={16} />
+          </Link>
         </div>
-
-        <AnimatePresence>
-          {feedback && (
-            <motion.p
-              initial={{ opacity: 0, y: 5 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              role="status"
-              className="mt-3 text-xs text-[#58745b]"
-            >
-              {feedback}
-            </motion.p>
-          )}
-        </AnimatePresence>
       </div>
     </motion.article>
   );
@@ -547,36 +498,37 @@ function ProductCard({ product, index }) {
 function Pagination({ page, totalPages, onChange }) {
   if (totalPages <= 1) return null;
 
-  const pages = Array.from(
+  const pageNumbers = Array.from(
     { length: totalPages },
     (_, index) => index + 1
   );
 
   return (
     <nav
+      className="mt-16 flex flex-wrap items-center justify-center gap-2"
       aria-label="Product pagination"
-      className="mt-20 flex flex-wrap items-center justify-center gap-2"
     >
       <button
         type="button"
-        onClick={() => onChange(page - 1)}
         disabled={page === 1}
-        className="flex h-11 w-11 items-center justify-center border border-[#e0e3da] text-[#284831] transition-colors hover:bg-[#284831] hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
+        onClick={() => onChange(page - 1)}
         aria-label="Previous page"
+        className="flex h-11 w-11 items-center justify-center border border-[#dfe4da] text-[#284831] disabled:cursor-not-allowed disabled:opacity-30"
       >
-        <Icon name="left" size={18} />
+        <ChevronLeft size={17} />
       </button>
 
-      {pages.map((number) => (
+      {pageNumbers.map((number) => (
         <button
           key={number}
           type="button"
           onClick={() => onChange(number)}
+          aria-label={`Page ${number}`}
           aria-current={page === number ? "page" : undefined}
-          className={`h-11 min-w-11 border px-3 text-sm font-medium transition-colors ${
+          className={`flex h-11 w-11 items-center justify-center border text-[12px] font-semibold transition-colors ${
             page === number
               ? "border-[#284831] bg-[#284831] text-white"
-              : "border-[#e0e3da] text-[#687767] hover:border-[#284831]"
+              : "border-[#dfe4da] bg-white text-[#284831] hover:border-[#284831]"
           }`}
         >
           {number}
@@ -585,172 +537,117 @@ function Pagination({ page, totalPages, onChange }) {
 
       <button
         type="button"
-        onClick={() => onChange(page + 1)}
         disabled={page === totalPages}
-        className="flex h-11 w-11 items-center justify-center border border-[#e0e3da] text-[#284831] transition-colors hover:bg-[#284831] hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
+        onClick={() => onChange(page + 1)}
         aria-label="Next page"
+        className="flex h-11 w-11 items-center justify-center border border-[#dfe4da] text-[#284831] disabled:cursor-not-allowed disabled:opacity-30"
       >
-        <Icon name="right" size={18} />
+        <ChevronRight size={17} />
       </button>
     </nav>
   );
 }
 
-function EmptyState({ onReset }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="flex min-h-[400px] flex-col items-center justify-center border border-[#e6e8df] bg-white px-6 py-16 text-center"
-    >
-      <div className="mb-7 flex h-16 w-16 items-center justify-center rounded-full bg-[#edf0e9] text-[#284831]">
-        <Icon name="search" size={28} />
-      </div>
-
-      <h3 className="font-serif text-4xl text-[#284831]">
-        No products found.
-      </h3>
-
-      <p className="mt-5 max-w-[400px] text-[14px] leading-[1.9] text-[#7b8579]">
-        Try changing your search, selecting another category, or
-        clearing your filters.
-      </p>
-
-      <button
-        type="button"
-        onClick={onReset}
-        className="mt-8 bg-[#284831] px-8 py-4 text-[11px] font-semibold uppercase tracking-[0.16em] text-white transition-colors hover:bg-[#b28b51]"
-      >
-        Clear All Filters
-      </button>
-    </motion.div>
-  );
-}
-
-function MobileFilters({
-  open,
-  onClose,
-  category,
-  subcategory,
-  onCategoryChange,
-  onSubcategoryChange,
-  availableOnly,
-  onAvailableChange,
-}) {
-  useEffect(() => {
-    if (!open) return;
-
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
-    const handleEscape = (event) => {
-      if (event.key === "Escape") onClose();
-    };
-
-    window.addEventListener("keydown", handleEscape);
-
-    return () => {
-      document.body.style.overflow = previous;
-      window.removeEventListener("keydown", handleEscape);
-    };
-  }, [open, onClose]);
-
-  return (
-    <AnimatePresence>
-      {open && (
-        <>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={onClose}
-            className="fixed inset-0 z-[80] bg-black/50 lg:hidden"
-          />
-
-          <motion.aside
-            initial={{ x: "-100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "-100%" }}
-            transition={{ type: "tween", duration: 0.3 }}
-            role="dialog"
-            aria-modal="true"
-            aria-label="Product filters"
-            className="fixed inset-y-0 left-0 z-[90] flex w-[min(90vw,380px)] flex-col bg-[#faf9f5] shadow-2xl lg:hidden"
-          >
-            <div className="flex items-center justify-between border-b border-[#e4e5dc] px-7 py-6">
-              <h2 className="font-serif text-3xl text-[#284831]">
-                Filters
-              </h2>
-
-              <button
-                type="button"
-                onClick={onClose}
-                aria-label="Close filters"
-                className="flex h-10 w-10 items-center justify-center"
-              >
-                <Icon name="close" size={22} />
-              </button>
-            </div>
-
-            <div className="flex-1 overflow-y-auto px-7 py-6">
-              <ShopSidebar
-                mobile
-                category={category}
-                subcategory={subcategory}
-                onCategoryChange={onCategoryChange}
-                onSubcategoryChange={onSubcategoryChange}
-                availableOnly={availableOnly}
-                onAvailableChange={onAvailableChange}
-              />
-            </div>
-
-            <div className="border-t border-[#e4e5dc] p-6">
-              <button
-                type="button"
-                onClick={onClose}
-                className="w-full bg-[#284831] px-6 py-4 text-xs font-semibold uppercase tracking-[0.16em] text-white"
-              >
-                View Products
-              </button>
-            </div>
-          </motion.aside>
-        </>
-      )}
-    </AnimatePresence>
-  );
-}
-
 export default function Shop() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [searchInput, setSearchInput] = useState(
-    searchParams.get("search") || ""
-  );
-  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-  const [availableOnly, setAvailableOnly] = useState(false);
-  const [sortBy, setSortBy] = useState("featured");
-  const [page, setPage] = useState(1);
+  const { addToCart } = useCart();
 
-  const productSectionRef = useRef(null);
-
-  const rawCategory = searchParams.get("category") || "all";
+  const categoryParam = searchParams.get("category") || "all";
+  const subcategoryParam = searchParams.get("subcategory") || "";
 
   const category = PRODUCT_CATEGORIES.some(
-    (item) => item.slug === rawCategory
+    (item) => item.id === categoryParam
   )
-    ? rawCategory
+    ? categoryParam
     : "all";
 
-  const rawSubcategory = searchParams.get("subcategory") || "";
-
   const subcategory = PRODUCT_SUBCATEGORIES.some(
-    (item) =>
-      item.id === rawSubcategory &&
-      (category === "all" || item.category === category)
+    (item) => item.id === subcategoryParam
   )
-    ? rawSubcategory
+    ? subcategoryParam
     : "";
 
-  const search = searchParams.get("search") || "";
+  const [search, setSearch] = useState("");
+  const [sortBy, setSortBy] = useState("featured");
+  const [availableOnly, setAvailableOnly] = useState(false);
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [page, setPage] = useState(1);
+  const [addedProduct, setAddedProduct] = useState(null);
+
+  useEffect(() => {
+    document.title = "Shop | Greenview Orchard";
+  }, []);
+
+  useEffect(() => {
+    setPage(1);
+  }, [category, subcategory, search, sortBy, availableOnly]);
+
+  useEffect(() => {
+    if (!mobileFiltersOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const onEscape = (event) => {
+      if (event.key === "Escape") {
+        setMobileFiltersOpen(false);
+      }
+    };
+
+    window.addEventListener("keydown", onEscape);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", onEscape);
+    };
+  }, [mobileFiltersOpen]);
+
+  const updateFilters = (nextCategory, nextSubcategory = "") => {
+    const next = new URLSearchParams();
+
+    if (nextCategory !== "all") {
+      next.set("category", nextCategory);
+    }
+
+    if (nextSubcategory) {
+      next.set("subcategory", nextSubcategory);
+    }
+
+    setSearchParams(next);
+  };
+
+  const changeCategory = (nextCategory) => {
+    updateFilters(nextCategory, "");
+  };
+
+  const changeSubcategory = (nextSubcategory, parentCategory) => {
+    updateFilters(
+      category === "all" ? parentCategory : category,
+      nextSubcategory
+    );
+  };
+
+  const clearFilters = () => {
+    setSearch("");
+    setSortBy("featured");
+    setAvailableOnly(false);
+    updateFilters("all", "");
+  };
+
+  const categoryCounts = useMemo(() => {
+    const allProducts = filterProducts();
+
+    return PRODUCT_CATEGORIES.reduce((counts, item) => {
+      counts[item.id] =
+        item.id === "all"
+          ? allProducts.length
+          : allProducts.filter(
+              (product) => product.category === item.id
+            ).length;
+
+      return counts;
+    }, {});
+  }, []);
 
   const filteredProducts = useMemo(
     () =>
@@ -771,217 +668,192 @@ export default function Shop() {
 
   const currentPage = Math.min(page, totalPages);
 
-  const visibleProducts = useMemo(
-    () =>
-      filteredProducts.slice(
-        (currentPage - 1) * PAGE_SIZE,
-        currentPage * PAGE_SIZE
-      ),
-    [filteredProducts, currentPage]
+  const visibleProducts = filteredProducts.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE
   );
 
-  useEffect(() => {
-    setSearchInput(search);
-  }, [search]);
+  const activeFilterCount =
+    Number(category !== "all") +
+    Number(Boolean(subcategory)) +
+    Number(availableOnly);
 
-  const updateParams = (updates) => {
-    const next = new URLSearchParams(searchParams);
+  const handleAdd = (product) => {
+    if (!isPurchasable(product)) return;
 
-    for (const [key, value] of Object.entries(updates)) {
-      if (value && value !== "all") {
-        next.set(key, value);
-      } else {
-        next.delete(key);
-      }
+    if (product.requiresAgeVerification) {
+      return;
     }
 
-    setSearchParams(next);
-    setPage(1);
-  };
-
-  const handleCategoryChange = (nextCategory) => {
-    updateParams({
-      category: nextCategory,
-      subcategory: "",
-    });
-  };
-
-  const handleSubcategoryChange = (nextSubcategory) => {
-    updateParams({
-      subcategory: nextSubcategory,
-    });
-  };
-
-  const handleSearch = (event) => {
-    event.preventDefault();
-
-    updateParams({
-      search: searchInput.trim(),
-    });
-  };
-
-  const handleReset = () => {
-    setSearchParams({});
-    setSearchInput("");
-    setAvailableOnly(false);
-    setSortBy("featured");
-    setPage(1);
+    addToCart(product.id, 1);
+    setAddedProduct(product.name);
   };
 
   const handlePageChange = (nextPage) => {
-    if (nextPage < 1 || nextPage > totalPages) return;
-
     setPage(nextPage);
 
-    productSectionRef.current?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
+    document
+      .getElementById("shop-products")
+      ?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
   };
 
-  const startResult =
-    filteredProducts.length === 0
-      ? 0
-      : (currentPage - 1) * PAGE_SIZE + 1;
-
-  const endResult = Math.min(
-    currentPage * PAGE_SIZE,
-    filteredProducts.length
-  );
-
   return (
-    <div className="overflow-x-clip bg-[#faf9f5]">
-      <ShopHero category={category} />
+    <main className="overflow-hidden bg-[#faf9f5]">
+      <DemoNotice />
+      <ShopHero />
 
-      <CategoryTabs
-        activeCategory={category}
-        onCategoryChange={handleCategoryChange}
-      />
+      <section className="mx-auto max-w-[1440px] px-5 pb-16 pt-20 sm:px-8 lg:px-12 lg:pb-24 lg:pt-28">
+        <div className="mb-10 flex flex-col justify-between gap-6 md:flex-row md:items-end">
+          <SectionHeading
+            eyebrow="Explore by collection"
+            title={
+              <>
+                Find your <em>favourite.</em>
+              </>
+            }
+            description="Browse fresh fruit, orchard-inspired wines and gifts in our demonstration collection."
+          />
+
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#9b9f92]">
+            {categoryCounts.all} curated examples
+          </p>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-5">
+          {PRODUCT_CATEGORIES.map((item) => (
+            <CategoryCard
+              key={item.id}
+              category={item}
+              active={category === item.id}
+              count={categoryCounts[item.id]}
+              onClick={() => changeCategory(item.id)}
+            />
+          ))}
+        </div>
+      </section>
 
       <section
-        ref={productSectionRef}
-        className="scroll-mt-28 py-20 sm:py-24 lg:py-28"
+        id="shop-products"
+        className="scroll-mt-28 border-t border-[#e9eae3] bg-white"
       >
-        <div className="mx-auto max-w-[1440px] px-6 sm:px-10 lg:px-14">
-          <Reveal className="mb-14 flex flex-col justify-between gap-6 md:flex-row md:items-end">
-            <div>
-              <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.25em] text-[#b28b51]">
-                Explore Our Products
-              </p>
-
-              <h2 className="font-serif text-[clamp(2.5rem,4.5vw,4.5rem)] leading-[1.1] tracking-[-0.045em] text-[#284831]">
-                Shop the Collection
-              </h2>
-            </div>
-
-            <p className="max-w-[360px] text-[14px] leading-[1.9] text-[#798477]">
-              Discover orchard-inspired products and seasonal favourites,
-              carefully presented in one collection.
-            </p>
-          </Reveal>
-
-          <div className="grid gap-12 lg:grid-cols-[240px_minmax(0,1fr)] xl:gap-16">
-            <ShopSidebar
-              category={category}
-              subcategory={subcategory}
-              onCategoryChange={handleCategoryChange}
-              onSubcategoryChange={handleSubcategoryChange}
-              availableOnly={availableOnly}
-              onAvailableChange={(value) => {
-                setAvailableOnly(value);
-                setPage(1);
-              }}
+        <div className="mx-auto max-w-[1440px] px-5 py-20 sm:px-8 lg:px-12 lg:py-24">
+          <div className="mb-10 flex flex-col justify-between gap-5 lg:flex-row lg:items-end">
+            <SectionHeading
+              eyebrow="Shop the collection"
+              title={
+                category === "all"
+                  ? "All products."
+                  : `${PRODUCT_CATEGORIES.find(
+                      (item) => item.id === category
+                    )?.name}.`
+              }
+              description="Browse, discover and build a demo cart using the illustrative collection."
             />
 
-            <div className="min-w-0">
-              <div className="mb-9 flex flex-col gap-5 border-b border-[#e4e5dc] pb-7 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex items-center gap-4">
-                  <button
-                    type="button"
-                    onClick={() => setMobileFiltersOpen(true)}
-                    className="inline-flex items-center gap-2 border border-[#dce1d8] px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.13em] text-[#284831] lg:hidden"
-                  >
-                    <Icon name="filter" size={18} />
-                    Filters
-                  </button>
+            <span className="text-[12px] text-[#899387]">
+              Showing {filteredProducts.length}{" "}
+              {filteredProducts.length === 1
+                ? "product"
+                : "products"}
+            </span>
+          </div>
 
-                  <p
-                    aria-live="polite"
-                    className="text-[13px] text-[#798477]"
-                  >
-                    Showing {startResult}–{endResult} of{" "}
-                    {filteredProducts.length} products
-                  </p>
-                </div>
+          <div className="mb-10 flex flex-col gap-4 border-y border-[#e8ebe4] py-5 md:flex-row md:items-center md:justify-between">
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setMobileFiltersOpen(true)}
+                className="inline-flex items-center gap-2 border border-[#dfe4da] px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#284831] lg:hidden"
+              >
+                <SlidersHorizontal size={15} />
+                Filters
+                {activeFilterCount > 0 && (
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#284831] text-[10px] text-white">
+                    {activeFilterCount}
+                  </span>
+                )}
+              </button>
 
-                <div className="flex flex-wrap items-center gap-4">
-                  <form
-                    onSubmit={handleSearch}
-                    role="search"
-                    className="relative flex min-w-0 flex-1 items-center sm:w-[210px] sm:flex-none"
-                  >
-                    <input
-                      type="search"
-                      value={searchInput}
-                      onChange={(event) =>
-                        setSearchInput(event.target.value)
-                      }
-                      placeholder="Search products..."
-                      aria-label="Search products"
-                      className="w-full border-b border-[#cbd2c7] bg-transparent py-3 pr-9 text-[13px] text-[#284831] outline-none placeholder:text-[#9ba49a] focus:border-[#284831]"
-                    />
-
-                    <button
-                      type="submit"
-                      aria-label="Submit product search"
-                      className="absolute right-0 flex h-10 w-8 items-center justify-center text-[#284831]"
-                    >
-                      <Icon name="search" size={18} />
-                    </button>
-                  </form>
-
-                  <div className="relative flex items-center gap-2">
-                    <label
-                      htmlFor="shop-sort"
-                      className="hidden text-[12px] text-[#8b9589] xl:block"
-                    >
-                      Sort:
-                    </label>
-
-                    <select
-                      id="shop-sort"
-                      value={sortBy}
-                      onChange={(event) => {
-                        setSortBy(event.target.value);
-                        setPage(1);
-                      }}
-                      className="max-w-[190px] cursor-pointer border-b border-[#cbd2c7] bg-transparent py-3 text-[12px] font-medium text-[#284831] outline-none focus:border-[#284831]"
-                    >
-                      {productSortOptions.map((option) => (
-                        <option
-                          key={option.value}
-                          value={option.value}
-                        >
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
+              <div className="relative min-w-0 flex-1 md:w-[310px] md:flex-none">
+                <Search
+                  size={17}
+                  className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#9ca79a]"
+                />
+                <input
+                  type="search"
+                  value={search}
+                  onChange={(event) =>
+                    setSearch(event.target.value)
+                  }
+                  placeholder="Search the collection..."
+                  aria-label="Search products"
+                  className="h-12 w-full border border-[#e0e4db] bg-[#fafbf8] pl-11 pr-4 text-[12px] text-[#284831] outline-none transition-colors placeholder:text-[#9ca79a] focus:border-[#284831]"
+                />
               </div>
+            </div>
 
-              {filteredProducts.length > 0 ? (
+            <div className="flex items-center justify-between gap-4 md:justify-end">
+              <span className="hidden text-[11px] text-[#929d90] sm:inline">
+                {filteredProducts.length} results
+              </span>
+
+              <div className="relative min-w-[200px] flex-1 md:flex-none">
+                <select
+                  value={sortBy}
+                  onChange={(event) =>
+                    setSortBy(event.target.value)
+                  }
+                  aria-label="Sort products"
+                  className="h-12 w-full appearance-none border border-[#e0e4db] bg-white pl-4 pr-10 text-[12px] text-[#284831] outline-none focus:border-[#284831]"
+                >
+                  {productSortOptions.map((option) => (
+                    <option
+                      key={option.value}
+                      value={option.value}
+                    >
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown
+                  size={16}
+                  className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[#718071]"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="grid gap-10 lg:grid-cols-[230px_minmax(0,1fr)] xl:gap-14">
+            <aside className="hidden lg:block">
+              <div className="sticky top-28">
+                <FilterContents
+                  category={category}
+                  subcategory={subcategory}
+                  availableOnly={availableOnly}
+                  onCategoryChange={changeCategory}
+                  onSubcategoryChange={changeSubcategory}
+                  onAvailableChange={setAvailableOnly}
+                  onClear={clearFilters}
+                  counts={categoryCounts}
+                />
+              </div>
+            </aside>
+
+            <div className="min-w-0">
+              {visibleProducts.length > 0 ? (
                 <>
-                  <div className="grid grid-cols-1 gap-x-6 gap-y-14 sm:grid-cols-2 xl:grid-cols-3 xl:gap-x-8">
-                    <AnimatePresence mode="popLayout">
-                      {visibleProducts.map((product, index) => (
-                        <ProductCard
-                          key={product.id}
-                          product={product}
-                          index={index}
-                        />
-                      ))}
-                    </AnimatePresence>
+                  <div className="grid grid-cols-1 gap-x-5 gap-y-12 sm:grid-cols-2 xl:grid-cols-3 xl:gap-x-7">
+                    {visibleProducts.map((product, index) => (
+                      <ProductCard
+                        key={product.id}
+                        product={product}
+                        index={index}
+                        onAdd={handleAdd}
+                      />
+                    ))}
                   </div>
 
                   <Pagination
@@ -989,62 +861,211 @@ export default function Shop() {
                     totalPages={totalPages}
                     onChange={handlePageChange}
                   />
+
+                  <p className="mt-7 text-center text-[11px] text-[#9aa397]">
+                    Showing{" "}
+                    {(currentPage - 1) * PAGE_SIZE + 1}
+                    {" - "}
+                    {Math.min(
+                      currentPage * PAGE_SIZE,
+                      filteredProducts.length
+                    )}{" "}
+                    of {filteredProducts.length} products
+                  </p>
                 </>
               ) : (
-                <EmptyState onReset={handleReset} />
+                <div className="flex min-h-[440px] flex-col items-center justify-center border border-[#e8ebe4] bg-[#fafbf8] px-6 text-center">
+                  <Search
+                    size={30}
+                    strokeWidth={1.2}
+                    className="mb-6 text-[#b28b51]"
+                  />
+                  <h3 className="font-serif text-[34px] text-[#284831]">
+                    Nothing in the basket yet.
+                  </h3>
+                  <p className="mt-3 max-w-[340px] text-[13px] leading-7 text-[#849081]">
+                    We couldn't find a product matching your
+                    filters. Try a different category or search.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={clearFilters}
+                    className="mt-7 bg-[#284831] px-7 py-4 text-[11px] font-bold uppercase tracking-[0.14em] text-white transition-colors hover:bg-[#b28b51]"
+                  >
+                    Clear filters
+                  </button>
+                </div>
               )}
             </div>
           </div>
         </div>
       </section>
 
-      <section className="border-t border-[#e2e5db] bg-[#eef0e9] px-6 py-20 sm:px-10 sm:py-24">
-        <div className="mx-auto flex max-w-[1120px] flex-col items-center justify-between gap-10 text-center md:flex-row md:text-left">
-          <div>
-            <Reveal>
-              <p className="mb-4 text-[10px] font-semibold uppercase tracking-[0.24em] text-[#b28b51]">
-                A Little More About Us
-              </p>
+      <section className="relative overflow-hidden bg-[#213b2a]">
+        <div className="pointer-events-none absolute -right-10 top-0 select-none font-serif text-[230px] leading-none text-white/[0.035]">
+          G.
+        </div>
 
-              <h2 className="font-serif text-[clamp(2.3rem,4.5vw,4.5rem)] leading-[1.1] tracking-[-0.045em] text-[#284831]">
-                Rooted in the orchard.
-              </h2>
-
-              <p className="mt-5 max-w-[500px] text-[14px] leading-[1.9] text-[#788576]">
-                Learn more about the story, people, and inspiration
-                behind Greenview.
-              </p>
-            </Reveal>
+        <div className="relative mx-auto flex max-w-[1440px] flex-col items-start justify-between gap-8 px-5 py-20 sm:px-8 lg:flex-row lg:items-center lg:px-12 lg:py-24">
+          <div className="max-w-[720px]">
+            <p className="mb-4 text-[10px] font-semibold uppercase tracking-[0.28em] text-[#e5c18a]">
+              Beyond the collection
+            </p>
+            <h2 className="font-serif text-[clamp(2.4rem,5vw,4.8rem)] leading-[1.05] tracking-[-0.045em] text-white">
+              There is more to
+              <br />
+              <span className="italic text-[#e5c18a]">
+                discover.
+              </span>
+            </h2>
+            <p className="mt-5 max-w-[480px] text-[13px] leading-7 text-white/65">
+              Learn more about the orchard, explore the fruit
+              stall and discover the Greenview story.
+            </p>
           </div>
 
-          <Reveal>
-            <Link
-              to="/about"
-              className="group inline-flex shrink-0 items-center gap-7 bg-[#284831] px-8 py-5 text-[11px] font-semibold uppercase tracking-[0.16em] text-white transition-colors hover:bg-[#b28b51]"
-            >
-              Discover Our Story
-
-              <span className="transition-transform duration-300 group-hover:translate-x-1">
-                <Icon name="arrow" size={19} />
-              </span>
-            </Link>
-          </Reveal>
+          <Link
+            to="/about"
+            className="inline-flex shrink-0 items-center gap-4 border border-white/45 px-7 py-4 text-[11px] font-bold uppercase tracking-[0.16em] text-white transition-colors hover:border-[#e5c18a] hover:bg-[#e5c18a] hover:text-[#213b2a]"
+          >
+            Explore Our Story
+            <ArrowRight size={17} />
+          </Link>
         </div>
       </section>
 
-      <MobileFilters
-        open={mobileFiltersOpen}
-        onClose={() => setMobileFiltersOpen(false)}
-        category={category}
-        subcategory={subcategory}
-        onCategoryChange={handleCategoryChange}
-        onSubcategoryChange={handleSubcategoryChange}
-        availableOnly={availableOnly}
-        onAvailableChange={(value) => {
-          setAvailableOnly(value);
-          setPage(1);
-        }}
-      />
-    </div>
+      <AnimatePresence>
+        {mobileFiltersOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() =>
+                setMobileFiltersOpen(false)
+              }
+              className="fixed inset-0 z-[80] bg-[#102519]/55 lg:hidden"
+            />
+
+            <motion.aside
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{
+                duration: 0.3,
+                ease: EASE,
+              }}
+              role="dialog"
+              aria-modal="true"
+              aria-label="Product filters"
+              className="fixed inset-y-0 left-0 z-[90] flex w-[min(90vw,390px)] flex-col bg-white shadow-2xl lg:hidden"
+            >
+              <div className="flex items-center justify-between border-b border-[#e7e9e1] px-6 py-5">
+                <div className="flex items-center gap-3">
+                  <Filter
+                    size={18}
+                    className="text-[#b28b51]"
+                  />
+                  <h2 className="font-serif text-[26px] text-[#284831]">
+                    Filters
+                  </h2>
+                </div>
+
+                <IconButton
+                  label="Close filters"
+                  onClick={() =>
+                    setMobileFiltersOpen(false)
+                  }
+                >
+                  <X size={18} />
+                </IconButton>
+              </div>
+
+              <div className="flex-1 overflow-y-auto px-6 py-7">
+                <FilterContents
+                  category={category}
+                  subcategory={subcategory}
+                  availableOnly={availableOnly}
+                  onCategoryChange={changeCategory}
+                  onSubcategoryChange={changeSubcategory}
+                  onAvailableChange={setAvailableOnly}
+                  onClear={clearFilters}
+                  counts={categoryCounts}
+                />
+              </div>
+
+              <div className="border-t border-[#e7e9e1] p-6">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setMobileFiltersOpen(false)
+                  }
+                  className="w-full bg-[#284831] px-6 py-4 text-[11px] font-bold uppercase tracking-[0.15em] text-white"
+                >
+                  Show {filteredProducts.length} products
+                </button>
+              </div>
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {addedProduct && (
+          <motion.div
+            key={addedProduct}
+            initial={{
+              opacity: 0,
+              y: 30,
+              scale: 0.96,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+              scale: 1,
+            }}
+            exit={{
+              opacity: 0,
+              y: 20,
+            }}
+            className="fixed bottom-5 left-5 right-5 z-[100] max-w-[420px] border border-[#dce5d8] bg-white p-5 shadow-[0_20px_70px_rgba(0,0,0,0.18)] sm:left-auto sm:right-6"
+            role="status"
+          >
+            <div className="flex items-start gap-3">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#e9f1e7] text-[#284831]">
+                <Check size={17} />
+              </span>
+
+              <div className="min-w-0 flex-1">
+                <p className="text-[12px] font-semibold text-[#284831]">
+                  Added to demo cart
+                </p>
+                <p className="mt-1 text-[12px] text-[#718071]">
+                  {addedProduct}
+                </p>
+
+                <Link
+                  to="/cart"
+                  onClick={() => setAddedProduct(null)}
+                  className="mt-3 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.13em] text-[#a77d3f]"
+                >
+                  View cart
+                  <ArrowRight size={13} />
+                </Link>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setAddedProduct(null)}
+                aria-label="Dismiss notification"
+                className="text-[#8c978b] hover:text-[#284831]"
+              >
+                <X size={16} />
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </main>
   );
 }
