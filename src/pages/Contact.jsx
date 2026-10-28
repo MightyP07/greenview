@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -9,13 +8,17 @@ import {
 
 const EASE = [0.22, 1, 0.36, 1];
 
-// Replace these values once the client confirms them.
+const FORMSPREE_ENDPOINT = "https://formspree.io/f/xkjjbdwg";
+
 const CONTACT = {
-  email: "",
+  email: "hr@greenvieworchards.co.nz",
   phone: "",
-  address: "",
+  address: "259 Wright Road, Aongatete, Katikati 3181, New Zealand",
   hours: "",
 };
+
+const MAP_URL =
+  "https://www.google.com/maps/search/?api=1&query=259+Wright+Road%2C+Aongatete%2C+Katikati+3181%2C+New+Zealand";
 
 const IMAGES = {
   hero: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=2200&q=85",
@@ -39,7 +42,7 @@ const FAQS = [
   {
     question: "How do I contact Greenview Orchard?",
     answer:
-      "Use the enquiry form to prepare your message. The official email address and telephone number will be published once confirmed.",
+      "You can send us a message directly through the enquiry form on this page or email hr@greenvieworchards.co.nz. We'll respond as soon as possible.",
   },
   {
     question: "Can I order fruit online?",
@@ -54,12 +57,12 @@ const FAQS = [
   {
     question: "Can I apply for seasonal work?",
     answer:
-      "Visit the Employment page to learn about potential role categories. Current vacancies and recruitment arrangements must be confirmed directly with Greenview.",
+      "Visit the Employment page to learn about potential role categories. For employment enquiries, select Employment in the contact form and include the relevant details.",
   },
   {
     question: "Where is Greenview Orchard located?",
     answer:
-      "The verified visitor address and directions will be added to this page once confirmed by the orchard.",
+      "Greenview Orchard is located at 259 Wright Road, Aongatete, Katikati 3181, New Zealand. You can use the directions link in our contact information section to find us.",
   },
 ];
 
@@ -323,11 +326,10 @@ function ContactInformation() {
     {
       icon: "mail",
       label: "Email",
-      value: CONTACT.email || "To be confirmed",
+      value: CONTACT.email,
       description: "For general enquiries and information.",
-      href: CONTACT.email
-        ? `mailto:${CONTACT.email}`
-        : null,
+      href: `mailto:${CONTACT.email}`,
+      external: false,
     },
     {
       icon: "phone",
@@ -337,13 +339,15 @@ function ContactInformation() {
       href: CONTACT.phone
         ? `tel:${CONTACT.phone.replace(/\s/g, "")}`
         : null,
+      external: false,
     },
     {
       icon: "map",
       label: "Location",
-      value: CONTACT.address || "To be confirmed",
-      description: "Orchard address and visitor directions.",
-      href: null,
+      value: CONTACT.address,
+      description: "View our orchard location and directions.",
+      href: MAP_URL,
+      external: true,
     },
     {
       icon: "clock",
@@ -351,6 +355,7 @@ function ContactInformation() {
       value: CONTACT.hours || "To be confirmed",
       description: "Please confirm hours before visiting.",
       href: null,
+      external: false,
     },
   ];
 
@@ -381,6 +386,8 @@ function ContactInformation() {
                 {detail.href ? (
                   <a
                     href={detail.href}
+                    target={detail.external ? "_blank" : undefined}
+                    rel={detail.external ? "noopener noreferrer" : undefined}
                     className="mt-4 block break-words font-serif text-[23px] text-[#284831] transition-colors hover:text-[#b28b51]"
                   >
                     {detail.value}
@@ -403,16 +410,18 @@ function ContactInformation() {
   );
 }
 
-function ContactForm() {
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    subject: "",
-    message: "",
-  });
+const INITIAL_FORM = {
+  name: "",
+  email: "",
+  phone: "",
+  subject: "",
+  message: "",
+};
 
+function ContactForm() {
+  const [form, setForm] = useState(INITIAL_FORM);
   const [status, setStatus] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const updateField = (field, value) => {
     setForm((current) => ({
@@ -423,47 +432,72 @@ function ContactForm() {
     if (status) setStatus(null);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!CONTACT.email) {
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+    setStatus(null);
+
+    try {
+      const response = await fetch(FORMSPREE_ENDPOINT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          name: form.name.trim(),
+          email: form.email.trim(),
+          phone: form.phone.trim() || "Not provided",
+          enquiry_type: form.subject,
+          message: form.message.trim(),
+          _subject: `Greenview Orchard - ${form.subject}`,
+        }),
+      });
+
+      let result = null;
+
+      try {
+        result = await response.json();
+      } catch {
+        // A non-JSON response is handled using the HTTP status.
+      }
+
+      if (!response.ok) {
+        const formspreeError = result?.errors
+          ?.map((error) => error.message)
+          .filter(Boolean)
+          .join(" ");
+
+        throw new Error(
+          formspreeError ||
+            "We couldn't send your message. Please try again."
+        );
+      }
+
+      setStatus({
+        success: true,
+        message:
+          "Thank you for contacting Greenview Orchard. Your enquiry has been submitted successfully. We'll get back to you as soon as possible.",
+      });
+
+      setForm({ ...INITIAL_FORM });
+    } catch (error) {
       setStatus({
         success: false,
         message:
-          "The official Greenview email address has not yet been configured. Your message has not been sent. Please try again once contact details are available.",
+          error?.message ||
+          "Something went wrong. Please try again or contact us by email.",
       });
-
-      return;
+    } finally {
+      setIsSubmitting(false);
     }
-
-    const subject = encodeURIComponent(
-      `Greenview Orchard - ${form.subject}`
-    );
-
-    const body = encodeURIComponent(
-      [
-        `Name: ${form.name}`,
-        `Email: ${form.email}`,
-        `Phone: ${form.phone || "Not provided"}`,
-        `Enquiry Type: ${form.subject}`,
-        "",
-        "Message:",
-        form.message,
-      ].join("\n")
-    );
-
-    window.location.href =
-      `mailto:${CONTACT.email}?subject=${subject}&body=${body}`;
-
-    setStatus({
-      success: true,
-      message:
-        "Your email application should open with the enquiry prepared. Please send the email from there. No message has been submitted through this website.",
-    });
   };
 
   const inputClass =
-    "w-full border-b border-[#d9e0d5] bg-transparent px-0 py-4 text-[14px] text-[#284831] outline-none transition-colors placeholder:text-[#a3ada0] focus:border-[#b28b51]";
+    "w-full border-b border-[#d9e0d5] bg-transparent px-0 py-4 text-[14px] text-[#284831] outline-none transition-colors placeholder:text-[#a3ada0] focus:border-[#b28b51] disabled:cursor-not-allowed disabled:opacity-60";
 
   return (
     <section
@@ -494,11 +528,25 @@ function ContactForm() {
             />
 
             <p className="text-[12px] leading-[1.9] text-[#788575]">
-              The form currently uses your email
-              application rather than an online
-              messaging backend. No information is
-              stored on the website.
+              Your enquiry will be submitted securely
+              through our contact form. Please provide
+              a valid email address so our team can
+              respond to your message.
             </p>
+          </div>
+
+          <div className="mt-10">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#b28b51]">
+              Prefer Email?
+            </p>
+
+            <a
+              href={`mailto:${CONTACT.email}`}
+              className="mt-3 inline-flex items-center gap-3 break-all font-serif text-[20px] text-[#284831] transition-colors hover:text-[#b28b51] sm:text-[24px]"
+            >
+              <Icon name="mail" size={21} className="shrink-0" />
+              {CONTACT.email}
+            </a>
           </div>
         </Reveal>
 
@@ -525,8 +573,11 @@ function ContactForm() {
 
                 <input
                   type="text"
+                  name="name"
                   required
+                  maxLength={120}
                   autoComplete="name"
+                  disabled={isSubmitting}
                   value={form.name}
                   onChange={(event) =>
                     updateField("name", event.target.value)
@@ -543,8 +594,11 @@ function ContactForm() {
 
                 <input
                   type="email"
+                  name="email"
                   required
+                  maxLength={254}
                   autoComplete="email"
+                  disabled={isSubmitting}
                   value={form.email}
                   onChange={(event) =>
                     updateField("email", event.target.value)
@@ -561,7 +615,10 @@ function ContactForm() {
 
                 <input
                   type="tel"
+                  name="phone"
                   autoComplete="tel"
+                  maxLength={40}
+                  disabled={isSubmitting}
                   value={form.phone}
                   onChange={(event) =>
                     updateField("phone", event.target.value)
@@ -577,7 +634,9 @@ function ContactForm() {
                 </span>
 
                 <select
+                  name="enquiry_type"
                   required
+                  disabled={isSubmitting}
                   value={form.subject}
                   onChange={(event) =>
                     updateField("subject", event.target.value)
@@ -602,9 +661,12 @@ function ContactForm() {
                 </span>
 
                 <textarea
+                  name="message"
                   rows={5}
                   required
                   minLength={10}
+                  maxLength={5000}
+                  disabled={isSubmitting}
                   value={form.message}
                   onChange={(event) =>
                     updateField("message", event.target.value)
@@ -617,36 +679,55 @@ function ContactForm() {
 
             <button
               type="submit"
-              className="group mt-10 flex w-full items-center justify-center gap-5 bg-[#284831] px-8 py-5 text-[11px] font-semibold uppercase tracking-[0.16em] text-white transition-colors hover:bg-[#b28b51]"
+              disabled={isSubmitting}
+              aria-busy={isSubmitting}
+              className="group mt-10 flex w-full items-center justify-center gap-5 bg-[#284831] px-8 py-5 text-[11px] font-semibold uppercase tracking-[0.16em] text-white transition-colors hover:bg-[#b28b51] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:bg-[#284831]"
             >
-              Prepare Email Enquiry
+              {isSubmitting ? (
+                <>
+                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                  Sending Your Message...
+                </>
+              ) : (
+                <>
+                  Send Enquiry
 
-              <span className="transition-transform group-hover:translate-x-1">
-                <Icon name="arrow" size={19} />
-              </span>
+                  <span className="transition-transform group-hover:translate-x-1">
+                    <Icon name="arrow" size={19} />
+                  </span>
+                </>
+              )}
             </button>
 
-            <AnimatePresence>
+            <AnimatePresence mode="wait">
               {status && (
                 <motion.div
+                  key={status.success ? "success" : "error"}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
-                  role="status"
-                  className={`mt-6 border px-5 py-4 text-[12px] leading-[1.85] ${
+                  role={status.success ? "status" : "alert"}
+                  aria-live={status.success ? "polite" : "assertive"}
+                  className={`mt-6 flex items-start gap-3 border px-5 py-4 text-[12px] leading-[1.85] ${
                     status.success
                       ? "border-[#d6e4d3] bg-[#edf4eb] text-[#55745a]"
                       : "border-[#ead6bd] bg-[#faf1e6] text-[#926b42]"
                   }`}
                 >
-                  {status.message}
+                  <Icon
+                    name={status.success ? "check" : "info"}
+                    size={19}
+                    className="mt-0.5 shrink-0"
+                  />
+
+                  <p>{status.message}</p>
                 </motion.div>
               )}
             </AnimatePresence>
 
             <p className="mt-6 text-center text-[11px] leading-[1.8] text-[#9aa698]">
-              Your message is not automatically sent
-              by this form.
+              Your details will only be used to respond
+              to your enquiry.
             </p>
           </form>
         </Reveal>

@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { motion } from "motion/react";
 
@@ -18,6 +19,12 @@ const footerLinks = {
   ],
 };
 
+const orchardAddress =
+  "259 Wright Road, Aongatete, Katikati 3181, New Zealand";
+
+const mapsUrl =
+  "https://www.google.com/maps/search/?api=1&query=259+Wright+Road%2C+Aongatete%2C+Katikati+3181%2C+New+Zealand";
+
 export default function Footer() {
   return (
     <footer className="bg-[#213b2a] text-white">
@@ -26,9 +33,14 @@ export default function Footer() {
           <div>
             <Link
               to="/"
-              className="font-serif text-[43px] font-semibold tracking-[-0.06em]"
+              className="inline-flex items-center"
+              aria-label="Greenview Orchard homepage"
             >
-              greenview<span className="text-[#d1ac72]">.</span>
+              <img
+                src="/greenview-logo.jpg"
+                alt="Greenview Orchard"
+                className="h-24 w-24 object-contain"
+              />
             </Link>
 
             <p className="mt-1 text-[10px] font-medium uppercase tracking-[0.32em] text-[#c5cdbf]">
@@ -86,6 +98,23 @@ export default function Footer() {
               Have a question about our orchard, products, or accommodation?
               We'd be pleased to hear from you.
             </p>
+
+            <a
+              href={mapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-5 block max-w-[280px] text-sm leading-7 text-[#d1d9cf] transition-colors hover:text-white"
+              aria-label={`View ${orchardAddress} on Google Maps`}
+            >
+              <span className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.14em] text-[#d1ac72]">
+                Visit Our Orchard
+              </span>
+              259 Wright Road,
+              <br />
+              Aongatete, Katikati 3181,
+              <br />
+              New Zealand
+            </a>
 
             <Link
               to="/contact"

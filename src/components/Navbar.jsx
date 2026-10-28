@@ -14,7 +14,6 @@ const navigation = [
     children: [
       { label: "About Us", href: "/about" },
       { label: "Our Fruit", href: "/fruit-stall" },
-      { label: "Employment", href: "/employment" },
     ],
   },
   {
@@ -32,6 +31,10 @@ const navigation = [
   {
     label: "Accommodation",
     href: "/accommodation",
+  },
+  {
+    label: "Employment",
+    href: "/employment",
   },
   {
     label: "Contact",
@@ -201,21 +204,18 @@ export default function Navbar() {
         <div className="mx-auto flex h-[78px] max-w-[1440px] items-center justify-between gap-6 px-5 sm:px-8 lg:h-[92px] lg:px-12">
           <Link
             to="/"
-            className="group relative z-10 flex shrink-0 flex-col leading-none"
+            className="group relative z-10 flex shrink-0 items-center"
             aria-label="Greenview homepage"
           >
-            <span className="font-serif text-[30px] font-semibold tracking-[-0.055em] text-[#284831] sm:text-[34px]">
-              greenview
-              <span className="text-[#c49b57]">.</span>
-            </span>
-
-            <span className="mt-1 text-center text-[8px] font-semibold uppercase tracking-[0.32em] text-[#6e7c6b]">
-              Orchard & Estate
-            </span>
+            <img
+              src="/greenview-logo.jpg"
+              alt="Greenview Orchard"
+              className="h-[58px] w-[58px] object-contain sm:h-[66px] sm:w-[66px] lg:h-[76px] lg:w-[76px]"
+            />
           </Link>
 
           <nav
-            className="hidden h-full items-center gap-7 lg:flex xl:gap-9"
+            className="hidden h-full items-center gap-5 lg:flex xl:gap-7"
             aria-label="Main navigation"
           >
             {navigation.map((item) => {
@@ -233,7 +233,7 @@ export default function Navbar() {
                     key={item.label}
                     to={item.href}
                     end={item.href === "/"}
-                    className={`relative flex h-full items-center text-[12px] font-semibold uppercase tracking-[0.13em] transition-colors hover:text-[#b38b4c] ${
+                    className={`relative flex h-full items-center whitespace-nowrap text-[11px] font-semibold uppercase tracking-[0.11em] transition-colors hover:text-[#b38b4c] xl:text-[12px] xl:tracking-[0.13em] ${
                       isActive
                         ? "text-[#b38b4c]"
                         : "text-[#2c382d]"
@@ -280,7 +280,7 @@ export default function Navbar() {
                       activeDropdown === item.label
                     }
                     aria-haspopup="true"
-                    className={`flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-[0.13em] transition-colors hover:text-[#b38b4c] ${
+                    className={`flex items-center gap-1.5 whitespace-nowrap text-[11px] font-semibold uppercase tracking-[0.11em] transition-colors hover:text-[#b38b4c] xl:text-[12px] xl:tracking-[0.13em] ${
                       isActive
                         ? "text-[#b38b4c]"
                         : "text-[#2c382d]"
@@ -335,7 +335,7 @@ export default function Navbar() {
             })}
           </nav>
 
-          <div className="flex items-center gap-3 sm:gap-5">
+          <div className="flex shrink-0 items-center gap-3 sm:gap-5">
             <Link
               to="/cart"
               onClick={closeMobileMenu}
@@ -345,13 +345,12 @@ export default function Navbar() {
               }`}
             >
               <CartIcon />
-
               <CartBadge count={cartCount} />
             </Link>
 
             <Link
               to="/shop"
-              className="hidden border border-[#284831] bg-[#284831] px-6 py-3.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-white transition-all hover:bg-white hover:text-[#284831] sm:inline-flex"
+              className="hidden border border-[#284831] bg-[#284831] px-5 py-3.5 text-[11px] font-semibold uppercase tracking-[0.13em] text-white transition-all hover:bg-white hover:text-[#284831] sm:inline-flex xl:px-6 xl:tracking-[0.16em]"
             >
               Shop Online
             </Link>
@@ -400,9 +399,18 @@ export default function Navbar() {
               aria-label="Mobile navigation"
             >
               <div className="flex items-center justify-between border-b border-[#e8e5db] px-6 py-6">
-                <span className="font-serif text-3xl text-[#284831]">
-                  greenview.
-                </span>
+                <Link
+                  to="/"
+                  onClick={closeMobileMenu}
+                  aria-label="Greenview homepage"
+                  className="flex items-center"
+                >
+                  <img
+                    src="/greenview-logo.jpg"
+                    alt="Greenview Orchard"
+                    className="h-14 w-14 object-contain"
+                  />
+                </Link>
 
                 <button
                   type="button"
