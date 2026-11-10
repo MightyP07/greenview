@@ -10,8 +10,7 @@ import {
 const EASE = [0.22, 1, 0.36, 1];
 
 const FORMSPREE_ENDPOINT = "https://formspree.io/f/xkjjbdwg";
-
-const CONTACT_EMAIL = "hr@greenvieworchards.co.nz";
+const CONTACT_EMAIL = "info@greenvieworchards.co.nz";
 
 const IMAGES = {
   hero: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=2200&q=85",
@@ -32,7 +31,7 @@ const ROLE_TYPES = [
     category: "Harvest",
     title: "Fruit Picking",
     description:
-      "Fruit picking is an important part of the harvest season. The work typically involves selecting ripe fruit, handling produce carefully, and working outdoors as part of a seasonal team.",
+      "Fruit picking involves selecting ripe fruit, handling produce carefully, and working outdoors during the harvest season.",
     image: IMAGES.fruit,
     tasks: [
       "Harvesting fruit according to instructions",
@@ -49,7 +48,7 @@ const ROLE_TYPES = [
     category: "Packhouse",
     title: "Fruit Packing",
     description:
-      "Packhouse work focuses on preparing harvested produce for its next destination. Tasks may include sorting, checking quality, packing, and keeping work areas organised.",
+      "Fruit packing involves preparing harvested produce through sorting, quality checks, packing, and maintaining organised work areas.",
     image: IMAGES.work,
     tasks: [
       "Sorting and checking fruit",
@@ -58,7 +57,7 @@ const ROLE_TYPES = [
       "Following quality and safety procedures",
     ],
     details:
-      "Packhouse roles may require prolonged standing and attention to detail. Actual duties depend on the facilities and positions available.",
+      "Packing work may require prolonged standing and attention to detail. Duties depend on the position and facilities involved.",
   },
   {
     id: "orchard",
@@ -66,7 +65,7 @@ const ROLE_TYPES = [
     category: "Orchard",
     title: "Orchard Support",
     description:
-      "Orchard operations extend beyond harvest. General support work can involve seasonal maintenance, assisting established teams, and helping with tasks throughout the growing cycle.",
+      "Orchard support work can include seasonal maintenance, assisting teams, and helping with activities throughout the growing cycle.",
     image: IMAGES.orchard,
     tasks: [
       "Assisting with general orchard activities",
@@ -75,7 +74,7 @@ const ROLE_TYPES = [
       "Maintaining safe working practices",
     ],
     details:
-      "Specific responsibilities and experience requirements will depend on the role and the orchard's current operational needs.",
+      "Specific responsibilities and experience requirements depend on the position and current operational needs.",
   },
 ];
 
@@ -91,75 +90,74 @@ const PROCESS = [
     number: "01",
     title: "Explore",
     description:
-      "Read about the different types of orchard work and decide which area interests you.",
+      "Learn about the different types of orchard work and identify the areas that interest you.",
   },
   {
     number: "02",
     title: "Enquire",
     description:
-      "Send your details, preferred role, availability, and relevant experience through our employment form.",
+      "Share your details, preferred role, availability, and relevant experience through our employment enquiry form.",
   },
   {
     number: "03",
     title: "Connect",
     description:
-      "If suitable opportunities are available, the Greenview team can contact you about requirements and next steps.",
+      "The Greenview team can review your enquiry and contact you by email if there is a suitable opportunity.",
   },
   {
     number: "04",
     title: "Prepare",
     description:
-      "Before accepting a position, confirm the offer, work eligibility, employment terms, and any practical arrangements.",
+      "If offered a position, confirm your work eligibility, employment terms, and practical arrangements before starting.",
   },
 ];
 
 const FAQS = [
   {
-    question: "Is Greenview Orchard currently hiring?",
+    question: "How can I enquire about working at Greenview?",
     answer:
-      "Recruitment depends on the season and operational requirements. No specific vacancies are currently advertised on this page. You can submit an employment enquiry to express your interest.",
+      "Complete the employment enquiry form on this page or email info@greenvieworchards.co.nz. Include your preferred role, availability, and relevant experience.",
   },
   {
-    question: "What types of jobs are available?",
+    question: "What types of orchard work can I enquire about?",
     answer:
-      "Common orchard work categories include fruit picking, packing, and general orchard support. These are examples of seasonal work, not confirmation that each position is currently available at Greenview.",
+      "You can express interest in fruit picking, fruit packing, and general orchard support. The availability of specific positions depends on recruitment requirements.",
   },
   {
     question: "Do I need previous orchard experience?",
     answer:
-      "Experience requirements depend on the position. Include any relevant agricultural, horticultural, packing, or outdoor work experience in your enquiry. Greenview will confirm requirements for actual vacancies.",
+      "Experience requirements depend on the position. Include any relevant agricultural, horticultural, packing, or outdoor work experience in your enquiry.",
   },
   {
-    question: "Can international applicants apply?",
+    question: "Can international applicants enquire?",
     answer:
-      "Applicants must have the legal right to work in New Zealand for the position offered. Greenview has not confirmed whether visa sponsorship or immigration assistance is available. You can review work visa information through Immigration New Zealand.",
+      "You can submit an enquiry, but employment requires appropriate legal permission to work in New Zealand. Visa sponsorship or immigration assistance should not be assumed. Check Immigration New Zealand for official requirements.",
   },
   {
-    question: "Is staff accommodation available?",
+    question: "Is accommodation available for workers?",
     answer:
-      "Staff accommodation arrangements have not been confirmed. Please indicate whether you would require accommodation when making an employment enquiry. Do not make accommodation or travel commitments until arrangements are confirmed.",
+      "Accommodation arrangements depend on availability and must be confirmed directly with Greenview. You can indicate whether you require accommodation in your enquiry.",
   },
   {
     question: "What are the working hours and pay rates?",
     answer:
-      "Working hours, pay, contract duration, and employment conditions depend on the position. These details should be provided and confirmed before you accept any employment offer.",
+      "Working hours, pay rates, contract duration, and employment conditions depend on the position and will need to be confirmed before accepting an offer.",
   },
   {
-    question: "Can I apply with a friend or partner?",
+    question: "Can I enquire with a friend or partner?",
     answer:
-      "You may each submit an individual enquiry and mention that you would like to work during the same period. Availability of positions for multiple applicants cannot be guaranteed.",
+      "Yes. Each person should submit an individual enquiry and may mention a preference to work during the same period. Placement together cannot be guaranteed.",
   },
   {
-    question: "What happens after I submit an enquiry?",
+    question: "What happens after submitting my enquiry?",
     answer:
-      "Your enquiry is sent to Greenview through the website's contact service. Submission does not guarantee a vacancy, interview, or employment offer. The orchard may contact you if an appropriate opportunity is available.",
+      "Your enquiry is submitted to Greenview Orchard through the website's contact service. The team may contact you by email if a suitable opportunity becomes available. Submitting an enquiry does not guarantee employment.",
   },
 ];
 
 const INITIAL_FORM = {
   fullName: "",
   email: "",
-  phone: "",
   role: "",
   availability: "",
   workRights: "",
@@ -334,7 +332,9 @@ function EmploymentHero() {
               Home
             </Link>
             <span>/</span>
-            <span className="text-[#e5c18a]">Employment</span>
+            <span className="text-[#e5c18a]">
+              Employment
+            </span>
           </div>
 
           <SectionLabel light>
@@ -350,7 +350,7 @@ function EmploymentHero() {
           </h1>
 
           <p className="mt-9 max-w-[590px] text-[15px] leading-[2] text-white/80 sm:text-[17px]">
-            Discover seasonal orchard work, learn about
+            Explore seasonal orchard work, learn about
             different roles, and express your interest
             in opportunities with Greenview Orchard
             in New Zealand.
@@ -641,12 +641,11 @@ function Opportunities() {
               className="mt-0.5 shrink-0 text-[#b28b51]"
             />
             <p className="text-[12px] leading-[1.95] text-[#788575]">
-              These descriptions explain possible
-              orchard work categories. They are not
-              advertisements for confirmed vacancies.
-              Current openings, duties, pay rates,
-              start dates, and employment conditions
-              must be confirmed by Greenview Orchard.
+              The role descriptions above are provided
+              to help you understand different areas
+              of orchard work. Specific opportunities,
+              requirements, and employment conditions
+              are subject to confirmation by Greenview.
             </p>
           </div>
         </Reveal>
@@ -894,10 +893,10 @@ function RecruitmentProcess() {
 
         <Reveal>
           <p className="mt-8 text-[12px] leading-[1.9] text-[#879184]">
-            This is an enquiry pathway, not a guarantee
-            of recruitment or a formal job offer.
-            Greenview will confirm its actual
-            recruitment arrangements where applicable.
+            Registering your interest does not guarantee
+            a position or employment offer. The Greenview
+            team will confirm recruitment arrangements
+            where applicable.
           </p>
         </Reveal>
       </div>
@@ -922,7 +921,7 @@ function ApplicationEnquiry() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (isSubmitting) return;
+    if (isSubmitting || !form.consent) return;
 
     setIsSubmitting(true);
     setFeedback(null);
@@ -937,15 +936,18 @@ function ApplicationEnquiry() {
         body: JSON.stringify({
           name: form.fullName.trim(),
           email: form.email.trim(),
-          phone: form.phone.trim() || "Not provided",
           enquiry_type: "Employment",
           interested_role: form.role,
-          availability: form.availability.trim() || "Not specified",
+          availability:
+            form.availability.trim() || "Not specified",
           work_rights: form.workRights,
-          accommodation_required: form.accommodation || "Not specified",
-          experience: form.experience.trim() || "Not provided",
-          message: form.message.trim() || "Not provided",
-          consent_to_contact: form.consent ? "Yes" : "No",
+          accommodation_required:
+            form.accommodation || "Not specified",
+          experience:
+            form.experience.trim() || "Not provided",
+          message:
+            form.message.trim() || "Not provided",
+          consent_to_contact: "Yes",
           _subject: `Greenview Orchard Employment Enquiry - ${form.role}`,
         }),
       });
@@ -955,14 +957,16 @@ function ApplicationEnquiry() {
       try {
         result = await response.json();
       } catch {
-        // Handle unsuccessful responses using their HTTP status.
+        // HTTP status remains the source of truth.
       }
 
       if (!response.ok) {
-        const serviceError = result?.errors
-          ?.map((error) => error.message)
-          .filter(Boolean)
-          .join(" ");
+        const serviceError = Array.isArray(result?.errors)
+          ? result.errors
+              .map((error) => error.message)
+              .filter(Boolean)
+              .join(" ")
+          : null;
 
         throw new Error(
           serviceError ||
@@ -973,7 +977,7 @@ function ApplicationEnquiry() {
       setFeedback({
         success: true,
         message:
-          "Thank you for your interest in Greenview Orchard. Your employment enquiry has been submitted successfully. Our team may contact you if a suitable opportunity becomes available.",
+          "Your employment enquiry has been submitted successfully. Thank you for your interest in Greenview Orchard. Our team may contact you by email if a suitable opportunity becomes available.",
       });
 
       setForm({ ...INITIAL_FORM });
@@ -982,7 +986,7 @@ function ApplicationEnquiry() {
         success: false,
         message:
           error?.message ||
-          "Something went wrong. Please try again later.",
+          "Something went wrong. Please try again or contact us by email.",
       });
     } finally {
       setIsSubmitting(false);
@@ -990,7 +994,10 @@ function ApplicationEnquiry() {
   };
 
   const inputClass =
-    "w-full border-b border-[#d9e0d5] bg-transparent px-0 py-4 text-[14px] text-[#284831] outline-none transition-colors placeholder:text-[#a3ada0] focus:border-[#b28b51] disabled:cursor-not-allowed disabled:opacity-60";
+    "w-full rounded-none border-b border-[#d9e0d5] bg-transparent px-0 py-4 text-[14px] text-[#284831] outline-none transition-colors duration-300 placeholder:text-[#a3ada0] focus:border-[#b28b51] focus:ring-0 disabled:cursor-not-allowed disabled:opacity-60";
+
+  const labelClass =
+    "text-[11px] font-semibold uppercase tracking-[0.13em] text-[#617260]";
 
   return (
     <section
@@ -1022,25 +1029,39 @@ function ApplicationEnquiry() {
             />
 
             <p className="text-[12px] leading-[1.9] text-[#788575]">
-              This form submits an employment enquiry,
-              not a formal job application. Sending
-              an enquiry does not guarantee a vacancy,
-              interview, or employment offer.
+              Employment enquiries are reviewed according
+              to recruitment needs. Submitting your details
+              does not guarantee a vacancy, interview,
+              or employment offer.
             </p>
           </div>
 
           <div className="mt-10">
             <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#b28b51]">
-              Employment Contact
+              Prefer to Send an Email?
             </p>
 
             <a
-              href={`mailto:${CONTACT_EMAIL}`}
-              className="mt-3 inline-flex items-center gap-3 break-all font-serif text-[20px] text-[#284831] transition-colors hover:text-[#b28b51] sm:text-[24px]"
+              href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(
+                "Greenview Orchard - Employment Enquiry"
+              )}`}
+              className="group mt-4 inline-flex max-w-full items-center gap-3 break-all border-b border-[#d9e0d5] pb-3 font-serif text-[18px] text-[#284831] transition-colors hover:border-[#b28b51] hover:text-[#b28b51] sm:text-[23px]"
             >
-              <Icon name="mail" size={21} className="shrink-0" />
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#edf0e9] transition-colors group-hover:bg-[#e5c18a]">
+                <Icon name="mail" size={21} />
+              </span>
               {CONTACT_EMAIL}
+              <Icon
+                name="diagonal"
+                size={16}
+                className="shrink-0"
+              />
             </a>
+
+            <p className="mt-3 text-[12px] leading-[1.8] text-[#879184]">
+              Opens your email application with the
+              employment enquiry subject ready.
+            </p>
           </div>
 
           <div className="mt-12 border-t border-[#e0e5db] pt-8">
@@ -1050,7 +1071,7 @@ function ApplicationEnquiry() {
 
             <div className="mt-6 space-y-4">
               {[
-                "Your contact information",
+                "Your name and email address",
                 "The role you're interested in",
                 "Your preferred starting date",
                 "Relevant work experience",
@@ -1077,25 +1098,33 @@ function ApplicationEnquiry() {
         <Reveal delay={0.1}>
           <form
             onSubmit={handleSubmit}
-            className="border border-[#e0e5db] bg-[#f5f6f0] px-6 py-9 sm:px-10 sm:py-12"
+            className="relative overflow-hidden border border-[#e0e5db] bg-[#f5f6f0] px-6 py-9 shadow-[0_24px_80px_-50px_rgba(40,72,49,0.35)] sm:px-10 sm:py-12"
           >
-            <div className="mb-10">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#b28b51]">
-                Your Details
-              </p>
+            <div className="absolute left-0 top-0 h-1 w-full bg-[#284831]" />
 
-              <h3 className="mt-4 font-serif text-[33px] text-[#284831]">
-                Employment Enquiry
-              </h3>
+            <div className="mb-10 flex items-start justify-between gap-5">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#b28b51]">
+                  Your Details
+                </p>
 
-              <p className="mt-3 text-[12px] leading-[1.8] text-[#879184]">
-                Fields marked * are required.
-              </p>
+                <h3 className="mt-4 font-serif text-[33px] leading-tight text-[#284831]">
+                  Employment Enquiry
+                </h3>
+
+                <p className="mt-3 text-[12px] leading-[1.8] text-[#879184]">
+                  Fields marked * are required.
+                </p>
+              </div>
+
+              <div className="hidden h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#e8eee5] text-[#284831] sm:flex">
+                <Icon name="briefcase" size={27} />
+              </div>
             </div>
 
             <div className="grid gap-x-7 gap-y-7 sm:grid-cols-2">
               <label className="block">
-                <span className="text-[11px] font-semibold uppercase tracking-[0.13em] text-[#617260]">
+                <span className={labelClass}>
                   Full Name *
                 </span>
 
@@ -1116,7 +1145,7 @@ function ApplicationEnquiry() {
               </label>
 
               <label className="block">
-                <span className="text-[11px] font-semibold uppercase tracking-[0.13em] text-[#617260]">
+                <span className={labelClass}>
                   Email Address *
                 </span>
 
@@ -1136,28 +1165,8 @@ function ApplicationEnquiry() {
                 />
               </label>
 
-              <label className="block">
-                <span className="text-[11px] font-semibold uppercase tracking-[0.13em] text-[#617260]">
-                  Phone Number
-                </span>
-
-                <input
-                  type="tel"
-                  name="phone"
-                  autoComplete="tel"
-                  maxLength={40}
-                  disabled={isSubmitting}
-                  value={form.phone}
-                  onChange={(event) =>
-                    updateField("phone", event.target.value)
-                  }
-                  placeholder="Your phone number"
-                  className={inputClass}
-                />
-              </label>
-
-              <label className="block">
-                <span className="text-[11px] font-semibold uppercase tracking-[0.13em] text-[#617260]">
+              <label className="block sm:col-span-2">
+                <span className={labelClass}>
                   Interested Role *
                 </span>
 
@@ -1171,24 +1180,22 @@ function ApplicationEnquiry() {
                   }
                   className={inputClass}
                 >
-                  <option value="">Select a role type</option>
-                  <option value="Fruit Picking">
-                    Fruit Picking
+                  <option value="">
+                    Select a role type
                   </option>
-                  <option value="Fruit Packing">
-                    Fruit Packing
-                  </option>
-                  <option value="Orchard Support">
-                    Orchard Support
-                  </option>
+                  {ROLE_TYPES.map((role) => (
+                    <option key={role.id} value={role.title}>
+                      {role.title}
+                    </option>
+                  ))}
                   <option value="Other">
-                    Other / General Enquiry
+                    Other / General Employment Enquiry
                   </option>
                 </select>
               </label>
 
               <label className="block sm:col-span-2">
-                <span className="text-[11px] font-semibold uppercase tracking-[0.13em] text-[#617260]">
+                <span className={labelClass}>
                   Availability
                 </span>
 
@@ -1207,7 +1214,7 @@ function ApplicationEnquiry() {
               </label>
 
               <label className="block sm:col-span-2">
-                <span className="text-[11px] font-semibold uppercase tracking-[0.13em] text-[#617260]">
+                <span className={labelClass}>
                   Right to Work in New Zealand *
                 </span>
 
@@ -1243,7 +1250,7 @@ function ApplicationEnquiry() {
               </label>
 
               <label className="block sm:col-span-2">
-                <span className="text-[11px] font-semibold uppercase tracking-[0.13em] text-[#617260]">
+                <span className={labelClass}>
                   Would You Require Accommodation?
                 </span>
 
@@ -1252,31 +1259,31 @@ function ApplicationEnquiry() {
                   disabled={isSubmitting}
                   value={form.accommodation}
                   onChange={(event) =>
-                    updateField("accommodation", event.target.value)
+                    updateField(
+                      "accommodation",
+                      event.target.value
+                    )
                   }
                   className={inputClass}
                 >
                   <option value="">
                     Select an option
                   </option>
-                  <option value="Yes">
-                    Yes
-                  </option>
-                  <option value="No">
-                    No
-                  </option>
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
                   <option value="Maybe">
                     Maybe / I'd like more information
                   </option>
                 </select>
 
                 <p className="mt-2 text-[11px] leading-[1.7] text-[#9aa698]">
-                  Accommodation availability is not guaranteed.
+                  Accommodation arrangements are subject
+                  to confirmation.
                 </p>
               </label>
 
               <label className="block sm:col-span-2">
-                <span className="text-[11px] font-semibold uppercase tracking-[0.13em] text-[#617260]">
+                <span className={labelClass}>
                   Relevant Experience
                 </span>
 
@@ -1287,7 +1294,10 @@ function ApplicationEnquiry() {
                   disabled={isSubmitting}
                   value={form.experience}
                   onChange={(event) =>
-                    updateField("experience", event.target.value)
+                    updateField(
+                      "experience",
+                      event.target.value
+                    )
                   }
                   placeholder="Tell us about any previous orchard, agricultural, packing, or related work..."
                   className={`${inputClass} resize-y`}
@@ -1295,7 +1305,7 @@ function ApplicationEnquiry() {
               </label>
 
               <label className="block sm:col-span-2">
-                <span className="text-[11px] font-semibold uppercase tracking-[0.13em] text-[#617260]">
+                <span className={labelClass}>
                   Additional Information
                 </span>
 
@@ -1314,7 +1324,7 @@ function ApplicationEnquiry() {
               </label>
             </div>
 
-            <label className="mt-9 flex cursor-pointer items-start gap-3">
+            <label className="mt-9 flex cursor-pointer items-start gap-3 rounded-sm border border-[#e0e5db] bg-white/60 px-4 py-4 transition-colors hover:border-[#b28b51]">
               <input
                 type="checkbox"
                 required
@@ -1337,7 +1347,7 @@ function ApplicationEnquiry() {
               type="submit"
               disabled={isSubmitting}
               aria-busy={isSubmitting}
-              className="group mt-10 flex w-full items-center justify-center gap-5 bg-[#284831] px-8 py-5 text-[11px] font-semibold uppercase tracking-[0.16em] text-white transition-colors hover:bg-[#b28b51] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:bg-[#284831]"
+              className="group mt-10 flex w-full items-center justify-center gap-5 bg-[#284831] px-8 py-5 text-[11px] font-semibold uppercase tracking-[0.16em] text-white transition-all duration-300 hover:bg-[#b28b51] hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:bg-[#284831]"
             >
               {isSubmitting ? (
                 <>
@@ -1362,7 +1372,9 @@ function ApplicationEnquiry() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
                   role={feedback.success ? "status" : "alert"}
-                  aria-live={feedback.success ? "polite" : "assertive"}
+                  aria-live={
+                    feedback.success ? "polite" : "assertive"
+                  }
                   className={`mt-6 flex items-start gap-3 border px-5 py-4 text-[12px] leading-[1.85] ${
                     feedback.success
                       ? "border-[#d6e4d3] bg-[#edf4eb] text-[#55745a]"
@@ -1374,6 +1386,7 @@ function ApplicationEnquiry() {
                     size={19}
                     className="mt-0.5 shrink-0"
                   />
+
                   <p>{feedback.message}</p>
                 </motion.div>
               )}

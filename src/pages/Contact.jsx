@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -10,11 +11,12 @@ const EASE = [0.22, 1, 0.36, 1];
 
 const FORMSPREE_ENDPOINT = "https://formspree.io/f/xkjjbdwg";
 
+// Edit these details whenever the business information changes.
 const CONTACT = {
-  email: "hr@greenvieworchards.co.nz",
-  phone: "",
+  email: "info@greenvieworchards.co.nz",
   address: "259 Wright Road, Aongatete, Katikati 3181, New Zealand",
-  hours: "",
+  hours: "8:00 AM – 6:00 PM",
+  timezone: "New Zealand local time",
 };
 
 const MAP_URL =
@@ -42,27 +44,27 @@ const FAQS = [
   {
     question: "How do I contact Greenview Orchard?",
     answer:
-      "You can send us a message directly through the enquiry form on this page or email hr@greenvieworchards.co.nz. We'll respond as soon as possible.",
+      `You can send an enquiry using the form on this page or email ${CONTACT.email}. We'll respond as soon as possible.`,
   },
   {
-    question: "Can I order fruit online?",
+    question: "How can I enquire about fruit and other products?",
     answer:
-      "The online shop is being prepared. Products will become available to purchase once pricing, stock, delivery, and payment arrangements are configured.",
+      "Browse our shop or select Fresh Fruit & Orders or Wines & Fruit Ports in the enquiry form. Tell us which products you're interested in, and we'll assist with your enquiry.",
   },
   {
     question: "How can I enquire about accommodation?",
     answer:
-      "Choose Accommodation as your enquiry type and include your preferred dates, number of guests, and any questions about facilities.",
+      "Select Accommodation as your enquiry type and include your preferred dates, number of guests, and any questions you may have.",
   },
   {
-    question: "Can I apply for seasonal work?",
+    question: "Can I enquire about seasonal employment?",
     answer:
-      "Visit the Employment page to learn about potential role categories. For employment enquiries, select Employment in the contact form and include the relevant details.",
+      "Visit our Employment page for information about seasonal opportunities and how to submit an employment enquiry.",
   },
   {
     question: "Where is Greenview Orchard located?",
     answer:
-      "Greenview Orchard is located at 259 Wright Road, Aongatete, Katikati 3181, New Zealand. You can use the directions link in our contact information section to find us.",
+      `Greenview Orchard is located at ${CONTACT.address}. Use the directions link on this page to find our location.`,
   },
 ];
 
@@ -85,9 +87,6 @@ function Icon({ name, size = 20, className = "" }) {
         <rect x="3" y="5" width="18" height="14" rx="1" />
         <path d="m3 7 9 7 9-7" />
       </>
-    ),
-    phone: (
-      <path d="M6.6 2.5h3.1l1.2 5-2.1 1.8a15 15 0 0 0 5.9 5.9l1.8-2.1 5 1.2v3.1a3 3 0 0 1-3.3 3A18 18 0 0 1 3.6 5.8a3 3 0 0 1 3-3.3Z" />
     ),
     map: (
       <>
@@ -114,6 +113,12 @@ function Icon({ name, size = 20, className = "" }) {
       <>
         <path d="M20 4C11 4 5 7 5 15a5 5 0 0 0 5 5c8 0 11-6 10-16Z" />
         <path d="M4 21c3-7 7-10 13-13" />
+      </>
+    ),
+    send: (
+      <>
+        <path d="m22 2-7 20-4-9-9-4Z" />
+        <path d="M22 2 11 13" />
       </>
     ),
   };
@@ -190,8 +195,8 @@ function ContactHero() {
         className="absolute inset-0 h-full w-full object-cover"
       />
 
-      <div className="absolute inset-0 bg-gradient-to-r from-[#102519]/90 via-[#102519]/65 to-[#102519]/20" />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#102519]/50 via-transparent to-[#102519]/15" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[#102519]/95 via-[#102519]/70 to-[#102519]/20" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#102519]/55 via-transparent to-[#102519]/20" />
 
       <div className="relative z-10 mx-auto w-full max-w-[1440px] px-6 py-28 sm:px-10 lg:px-14">
         <Reveal>
@@ -208,7 +213,7 @@ function ContactHero() {
           </div>
 
           <SectionLabel light>
-            We'd Love to Hear From You
+            Get in Touch With Greenview
           </SectionLabel>
 
           <h1 className="mt-7 max-w-[1000px] font-serif text-[clamp(4rem,8vw,9rem)] leading-[0.99] tracking-[-0.06em] text-white">
@@ -219,24 +224,36 @@ function ContactHero() {
             </span>
           </h1>
 
-          <p className="mt-9 max-w-[560px] text-[15px] leading-[2] text-white/80 sm:text-[17px]">
-            Questions about our fruit, products,
-            accommodation, employment, or visiting?
-            We'd be happy to hear from you.
+          <p className="mt-9 max-w-[570px] text-[15px] leading-[2] text-white/80 sm:text-[17px]">
+            From fresh fruit and orchard products to
+            accommodation, employment, and visits,
+            we're here to answer your questions.
           </p>
 
-          <a
-            href="#contact-form"
-            className="group mt-11 inline-flex items-center gap-5 bg-[#e5c18a] px-8 py-5 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#284831] transition-colors hover:bg-white"
-          >
-            Send an Enquiry
+          <div className="mt-11 flex flex-wrap items-center gap-4">
+            <a
+              href="#contact-form"
+              className="group inline-flex items-center gap-5 bg-[#e5c18a] px-8 py-5 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#284831] transition-colors hover:bg-white"
+            >
+              Send an Enquiry
 
-            <span className="transition-transform group-hover:translate-x-1">
-              <Icon name="arrow" size={19} />
-            </span>
-          </a>
+              <span className="transition-transform group-hover:translate-x-1">
+                <Icon name="arrow" size={19} />
+              </span>
+            </a>
+
+            <a
+              href={`mailto:${CONTACT.email}`}
+              className="group inline-flex items-center gap-3 border border-white/45 px-8 py-5 text-[11px] font-semibold uppercase tracking-[0.16em] text-white transition-colors hover:border-white hover:bg-white hover:text-[#284831]"
+            >
+              <Icon name="mail" size={18} />
+              Email Us
+            </a>
+          </div>
         </Reveal>
       </div>
+
+      <div className="absolute bottom-0 left-0 right-0 z-10 h-px bg-white/15" />
     </section>
   );
 }
@@ -297,9 +314,9 @@ function ContactIntro() {
 
             <p className="mt-5 max-w-[530px] text-[15px] leading-[2] text-[#778574]">
               You can also enquire about accommodation,
-              employment, and visitor arrangements.
-              Select the relevant enquiry type so your
-              message is easy to direct.
+              employment, and visiting the orchard.
+              Simply choose the relevant enquiry type
+              and tell us what you'd like to know.
             </p>
           </Reveal>
 
@@ -325,43 +342,39 @@ function ContactInformation() {
   const details = [
     {
       icon: "mail",
-      label: "Email",
+      label: "Email Enquiries",
       value: CONTACT.email,
-      description: "For general enquiries and information.",
+      description: "Write to us directly for enquiries and information.",
       href: `mailto:${CONTACT.email}`,
-      external: false,
-    },
-    {
-      icon: "phone",
-      label: "Phone",
-      value: CONTACT.phone || "To be confirmed",
-      description: "Telephone contact details.",
-      href: CONTACT.phone
-        ? `tel:${CONTACT.phone.replace(/\s/g, "")}`
-        : null,
+      action: "Send an Email",
       external: false,
     },
     {
       icon: "map",
-      label: "Location",
+      label: "Our Location",
       value: CONTACT.address,
-      description: "View our orchard location and directions.",
+      description: "Find Greenview Orchard in Katikati, New Zealand.",
       href: MAP_URL,
+      action: "Get Directions",
       external: true,
     },
     {
       icon: "clock",
       label: "Opening Hours",
-      value: CONTACT.hours || "To be confirmed",
-      description: "Please confirm hours before visiting.",
+      value: CONTACT.hours,
+      description: CONTACT.timezone,
       href: null,
+      action: null,
       external: false,
     },
   ];
 
   return (
-    <section className="bg-[#f0f2eb] py-24 sm:py-32">
-      <div className="mx-auto max-w-[1440px] px-6 sm:px-10 lg:px-14">
+    <section className="relative overflow-hidden bg-[#f0f2eb] py-24 sm:py-32">
+      <div className="pointer-events-none absolute -right-28 -top-28 h-80 w-80 rounded-full border border-[#dce4d7]" />
+      <div className="pointer-events-none absolute -right-12 -top-12 h-48 w-48 rounded-full border border-[#dce4d7]" />
+
+      <div className="relative mx-auto max-w-[1440px] px-6 sm:px-10 lg:px-14">
         <Reveal className="mb-14 text-center">
           <SectionLabel>Contact Details</SectionLabel>
 
@@ -369,13 +382,28 @@ function ContactInformation() {
             Find your way
             <span className="italic"> to us.</span>
           </h2>
+
+          <p className="mx-auto mt-6 max-w-[560px] text-[14px] leading-[1.95] text-[#7b8879]">
+            Reach us by email, find our orchard, or check
+            our opening hours before planning your visit.
+          </p>
         </Reveal>
 
-        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-5 md:grid-cols-3">
           {details.map((detail, index) => (
-            <Reveal key={detail.label} delay={index * 0.09}>
-              <div className="h-full bg-[#faf9f5] px-7 py-10 text-center sm:px-8 sm:py-12">
-                <div className="mx-auto mb-7 flex h-16 w-16 items-center justify-center rounded-full bg-[#edf0e9] text-[#284831]">
+            <Reveal
+              key={detail.label}
+              delay={index * 0.09}
+              className="h-full"
+            >
+              <motion.div
+                whileHover={{ y: -7 }}
+                transition={{ duration: 0.35, ease: EASE }}
+                className="group relative flex h-full flex-col overflow-hidden border border-[#e0e6da] bg-[#faf9f5] px-7 py-10 sm:px-8 sm:py-12"
+              >
+                <div className="absolute left-0 top-0 h-1 w-0 bg-[#b28b51] transition-all duration-500 group-hover:w-full" />
+
+                <div className="mb-9 flex h-16 w-16 items-center justify-center rounded-full bg-[#edf0e9] text-[#284831] transition-colors duration-300 group-hover:bg-[#284831] group-hover:text-[#e5c18a]">
                   <Icon name={detail.icon} size={28} />
                 </div>
 
@@ -383,25 +411,39 @@ function ContactInformation() {
                   {detail.label}
                 </p>
 
-                {detail.href ? (
+                <h3 className="mt-4 break-words font-serif text-[clamp(1.35rem,2vw,1.8rem)] leading-[1.4] text-[#284831]">
+                  {detail.value}
+                </h3>
+
+                <p className="mt-5 text-[13px] leading-[1.9] text-[#839080]">
+                  {detail.description}
+                </p>
+
+                {detail.href && (
                   <a
                     href={detail.href}
                     target={detail.external ? "_blank" : undefined}
                     rel={detail.external ? "noopener noreferrer" : undefined}
-                    className="mt-4 block break-words font-serif text-[23px] text-[#284831] transition-colors hover:text-[#b28b51]"
+                    className="mt-auto inline-flex items-center gap-3 pt-9 text-[10px] font-semibold uppercase tracking-[0.15em] text-[#284831] transition-colors hover:text-[#b28b51]"
                   >
-                    {detail.value}
+                    {detail.action}
+                    <Icon
+                      name="diagonal"
+                      size={16}
+                      className="transition-transform group-hover:translate-x-1 group-hover:-translate-y-1"
+                    />
                   </a>
-                ) : (
-                  <h3 className="mt-4 break-words font-serif text-[23px] text-[#284831]">
-                    {detail.value}
-                  </h3>
                 )}
 
-                <p className="mt-4 text-[12px] leading-[1.85] text-[#839080]">
-                  {detail.description}
-                </p>
-              </div>
+                {!detail.href && (
+                  <div className="mt-auto pt-9">
+                    <div className="inline-flex items-center gap-3 border-t border-[#dfe6db] pt-5 text-[11px] text-[#788575]">
+                      <span className="h-2 w-2 rounded-full bg-[#b28b51]" />
+                      {CONTACT.timezone}
+                    </div>
+                  </div>
+                )}
+              </motion.div>
             </Reveal>
           ))}
         </div>
@@ -413,7 +455,6 @@ function ContactInformation() {
 const INITIAL_FORM = {
   name: "",
   email: "",
-  phone: "",
   subject: "",
   message: "",
 };
@@ -450,7 +491,6 @@ function ContactForm() {
         body: JSON.stringify({
           name: form.name.trim(),
           email: form.email.trim(),
-          phone: form.phone.trim() || "Not provided",
           enquiry_type: form.subject,
           message: form.message.trim(),
           _subject: `Greenview Orchard - ${form.subject}`,
@@ -462,7 +502,7 @@ function ContactForm() {
       try {
         result = await response.json();
       } catch {
-        // A non-JSON response is handled using the HTTP status.
+        // Use the HTTP status if the response is not JSON.
       }
 
       if (!response.ok) {
@@ -480,7 +520,7 @@ function ContactForm() {
       setStatus({
         success: true,
         message:
-          "Thank you for contacting Greenview Orchard. Your enquiry has been submitted successfully. We'll get back to you as soon as possible.",
+          "Your enquiry has been sent successfully. Thank you for contacting Greenview Orchard. We'll respond as soon as possible.",
       });
 
       setForm({ ...INITIAL_FORM });
@@ -489,7 +529,7 @@ function ContactForm() {
         success: false,
         message:
           error?.message ||
-          "Something went wrong. Please try again or contact us by email.",
+          "Something went wrong. Please try again or email us directly.",
       });
     } finally {
       setIsSubmitting(false);
@@ -516,8 +556,9 @@ function ContactForm() {
 
           <p className="mt-7 max-w-[440px] text-[15px] leading-[1.95] text-[#788575]">
             Have a question or something you'd like
-            to discuss? Complete the form with your
-            details and the nature of your enquiry.
+            to discuss? Send us an enquiry directly
+            through the website, and we'll get back
+            to you by email.
           </p>
 
           <div className="mt-10 flex gap-4 border-l-2 border-[#b28b51] bg-[#f0f2eb] px-6 py-6">
@@ -528,41 +569,53 @@ function ContactForm() {
             />
 
             <p className="text-[12px] leading-[1.9] text-[#788575]">
-              Your enquiry will be submitted securely
-              through our contact form. Please provide
-              a valid email address so our team can
-              respond to your message.
+              Complete the form with your details and
+              enquiry. Please use a valid email address
+              so we can reply.
             </p>
           </div>
 
-          <div className="mt-10">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#b28b51]">
-              Prefer Email?
-            </p>
+          <Reveal delay={0.1}>
+            <div className="mt-12 border-t border-[#e0e5db] pt-9">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#b28b51]">
+                Or Email Us Directly
+              </p>
 
-            <a
-              href={`mailto:${CONTACT.email}`}
-              className="mt-3 inline-flex items-center gap-3 break-all font-serif text-[20px] text-[#284831] transition-colors hover:text-[#b28b51] sm:text-[24px]"
-            >
-              <Icon name="mail" size={21} className="shrink-0" />
-              {CONTACT.email}
-            </a>
-          </div>
+              <a
+                href={`mailto:${CONTACT.email}`}
+                className="group mt-5 inline-flex max-w-full items-center gap-4 break-all font-serif text-[18px] text-[#284831] transition-colors hover:text-[#b28b51] sm:text-[23px]"
+              >
+                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#edf0e9] transition-colors group-hover:bg-[#e5c18a]">
+                  <Icon name="mail" size={20} />
+                </span>
+
+                {CONTACT.email}
+              </a>
+            </div>
+          </Reveal>
         </Reveal>
 
         <Reveal delay={0.1}>
           <form
             onSubmit={handleSubmit}
-            className="border border-[#e0e5db] bg-[#f5f6f0] px-6 py-9 sm:px-10 sm:py-12"
+            className="relative overflow-hidden border border-[#e0e5db] bg-[#f5f6f0] px-6 py-9 sm:px-10 sm:py-12"
           >
-            <div className="mb-10">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#b28b51]">
-                Contact Form
-              </p>
+            <div className="absolute left-0 top-0 h-1 w-full bg-[#284831]" />
 
-              <h3 className="mt-4 font-serif text-[33px] text-[#284831]">
-                Your Enquiry
-              </h3>
+            <div className="mb-10 flex items-start justify-between gap-5">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#b28b51]">
+                  Contact Form
+                </p>
+
+                <h3 className="mt-4 font-serif text-[33px] text-[#284831]">
+                  Your Enquiry
+                </h3>
+              </div>
+
+              <div className="hidden h-14 w-14 items-center justify-center rounded-full bg-[#e8ede4] text-[#284831] sm:flex">
+                <Icon name="send" size={24} />
+              </div>
             </div>
 
             <div className="grid gap-x-7 gap-y-7 sm:grid-cols-2">
@@ -608,27 +661,7 @@ function ContactForm() {
                 />
               </label>
 
-              <label className="block">
-                <span className="text-[11px] font-semibold uppercase tracking-[0.13em] text-[#617260]">
-                  Phone Number
-                </span>
-
-                <input
-                  type="tel"
-                  name="phone"
-                  autoComplete="tel"
-                  maxLength={40}
-                  disabled={isSubmitting}
-                  value={form.phone}
-                  onChange={(event) =>
-                    updateField("phone", event.target.value)
-                  }
-                  placeholder="Your phone number"
-                  className={inputClass}
-                />
-              </label>
-
-              <label className="block">
+              <label className="block sm:col-span-2">
                 <span className="text-[11px] font-semibold uppercase tracking-[0.13em] text-[#617260]">
                   Enquiry Type *
                 </span>
@@ -662,7 +695,7 @@ function ContactForm() {
 
                 <textarea
                   name="message"
-                  rows={5}
+                  rows={6}
                   required
                   minLength={10}
                   maxLength={5000}
@@ -726,7 +759,7 @@ function ContactForm() {
             </AnimatePresence>
 
             <p className="mt-6 text-center text-[11px] leading-[1.8] text-[#9aa698]">
-              Your details will only be used to respond
+              Your details will be used to respond
               to your enquiry.
             </p>
           </form>
@@ -913,17 +946,11 @@ export default function Contact() {
   return (
     <div className="overflow-x-clip bg-[#faf9f5]">
       <ContactHero />
-
       <ContactIntro />
-
       <ContactInformation />
-
       <ContactForm />
-
       <LandscapeBanner />
-
       <FAQSection />
-
       <ClosingCTA />
     </div>
   );
